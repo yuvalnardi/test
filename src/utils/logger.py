@@ -19,8 +19,8 @@ def setup():
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(logging.DEBUG)
     # create formatter and add it to the handlers
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(module)s - %(funcName)s  %(message)s',
-                                  datefmt='%Y-%m-%d %H:%M:%S')
+    # formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(module)s - %(funcName)s  %(message)s',
+    #                               datefmt='%Y-%m-%d %H:%M:%S')
     formatter = logging.Formatter('[%(asctime)s]-[%(levelname)s]-[%(module)s]-[%(funcName)s] %(message)s',
                                   datefmt='%Y-%m-%d %H:%M:%S')
     # formatter = logging.Formatter('%(asctime)s - %(levelname)s %(message)s',
