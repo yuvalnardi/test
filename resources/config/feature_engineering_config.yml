@@ -1,0 +1,37 @@
+# When this config file has more than one set of parameters for each param
+# (e.g., MissingDataHandler), only the latest param is considered.
+# An empty value is parsed as None.
+
+MetaParams:
+    client_name: Strauss
+    number_of_batches:
+    run_in_parallel: False
+    raw_data_dir:
+    design_matrix_dir:
+
+TimeSeriesFeaturesEnricher:
+    feature_calculator_to_params:
+        maximum :
+        mean :
+        median :
+        minimum :
+        sum_values :
+        variance :
+        abs_energy :
+        autocorrelation : [{'lag': 1}]
+        binned_entropy : [{'max_bins': 10}]
+        c3 : [{'lag': 1}]
+        cid_ce : [{'normalize': True}]
+        count_above_mean :
+        count_below_mean :
+        fft_aggregated : [{'aggtype': 'centroid'}, {'aggtype': 'variance'}, {'aggtype': 'skew'}, {'aggtype': 'kurtosis'}]
+        fft_coefficient : [{'attr': 'real', 'coeff': 0}]
+        kurtosis :
+        mean_abs_change :
+        mean_second_derivative_central :
+        sample_entropy :
+        skewness :
+        spkt_welch_density : [{'coeff': 2}]
+        time_reversal_asymmetry_statistic : [{'lag': 1}]
+
+FeatureExtractors: [F1, F2, F3]
