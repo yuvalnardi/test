@@ -34,4 +34,4 @@ TimeSeriesFeaturesEnricher:
         spkt_welch_density : [{'coeff': 2}]
         time_reversal_asymmetry_statistic : [{'lag': 1}]
 
-FeatureExtractors: [F1, F2, F3]
+FeatureExtractors: [GlobalFeatureExtractor]

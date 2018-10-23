@@ -1,8 +1,10 @@
+import numpy as np
 import pandas as pd
 import time
 
 from src.utils.logger import log
 from src.feature_engineering.main.feature_engineering_params import FeatureEngineeringParams
+from src.feature_engineering.feature_extractors.composite_feature_extractor import CompositeFeatureExtractor
 
 
 class FeatureEngineeringRunner(object):
@@ -19,16 +21,22 @@ class FeatureEngineeringRunner(object):
         self._design_matrix_dir = meta_params.get_design_matrix_dir()
 
         self._time_series_features_enricher = feature_engineering_params.get_time_series_features_enricher()
-        self._get_feature_extractors = feature_engineering_params.get_feature_extractors()
+        self._feature_extractor_names = feature_engineering_params.get_feature_extractors()
 
     def run(self):
 
         log.debug('Running feature engineering ..')
         fe_start_time = time.time()
 
-        feature_engineering_main_output = pd.DataFrame({})
+        # load data
+        data = pd.DataFrame(np.random.normal(0, 1, [10, 2]), columns=['X1', 'X2'])
 
-        time.sleep(10)
+        # instantiate composite feature extractor
+
+        cfe = CompositeFeatureExtractor(self._feature_extractors)
+        design_matrix = cfe.extract(data)
+
+        feature_engineering_main_output = design_matrix
 
         fe_end_time = time.time()
         fe_duration = round((fe_end_time - fe_start_time)/60, 2)

@@ -40,7 +40,7 @@ class FeatureEngineeringParams(object):
         # config file main sections
         self._meta_params = None
         self._time_series_features_enricher = None
-        self._feature_extractors = None
+        self._feature_extractor_names = None
 
         self.params_full_path = params_full_path
         self._load_params(params_full_path)
@@ -51,8 +51,8 @@ class FeatureEngineeringParams(object):
     def get_time_series_features_enricher(self):
         return self._time_series_features_enricher
 
-    def get_feature_extractors(self):
-        return self._feature_extractors
+    def get_feature_extractor_names(self):
+        return self._feature_extractor_names
 
     def _load_params(self, params_full_path):
 
@@ -99,4 +99,4 @@ class FeatureEngineeringParams(object):
 
         # FeatureExtractors
         section_name = 'FeatureExtractors'
-        self._feature_extractors = fe_object_to_params[section_name]
+        self._feature_extractor_names = fe_object_to_params[section_name]
