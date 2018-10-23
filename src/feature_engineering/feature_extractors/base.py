@@ -6,7 +6,7 @@ class FeatureExtractorBase(object):
         pass
 
     def extractFeatures(self, data):
-        design_matrix =  self.extract(data)
+        design_matrix = self.extract(data)
 
         return design_matrix
 
