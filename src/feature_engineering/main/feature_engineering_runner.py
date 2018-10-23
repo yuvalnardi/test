@@ -5,6 +5,8 @@ import time
 from src.utils.logger import log
 from src.feature_engineering.main.feature_engineering_params import FeatureEngineeringParams
 from src.feature_engineering.feature_extractors.composite_feature_extractor import CompositeFeatureExtractor
+from src.feature_engineering.feature_extractors.global_feature_extractor import GlobalFeatureExtractor
+from src.feature_engineering.feature_extractors.temporal_feature_extractor import TemporalFeatureExtractor
 
 
 class FeatureEngineeringRunner(object):
@@ -21,7 +23,7 @@ class FeatureEngineeringRunner(object):
         self._design_matrix_dir = meta_params.get_design_matrix_dir()
 
         self._time_series_features_enricher = feature_engineering_params.get_time_series_features_enricher()
-        self._feature_extractor_names = feature_engineering_params.get_feature_extractors()
+        self._feature_extractor_names = feature_engineering_params.get_feature_extractor_names()
 
     def run(self):
 
@@ -33,7 +35,10 @@ class FeatureEngineeringRunner(object):
 
         # instantiate composite feature extractor
 
-        cfe = CompositeFeatureExtractor(self._feature_extractors)
+        # TODO: map self._feature_extractor_names to self._feature_extractor_objects
+        gfe = GlobalFeatureExtractor()
+        tfe = TemporalFeatureExtractor()
+        cfe = CompositeFeatureExtractor([gfe, tfe])
         design_matrix = cfe.extract(data)
 
         feature_engineering_main_output = design_matrix
