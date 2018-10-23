@@ -21,7 +21,9 @@ def setup():
     # create formatter and add it to the handlers
     # formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(module)s - %(funcName)s  %(message)s',
     #                               datefmt='%Y-%m-%d %H:%M:%S')
-    formatter = logging.Formatter('[%(asctime)s]-[%(levelname)s]-[%(module)s]-[%(funcName)s] %(message)s',
+    # formatter = logging.Formatter('[%(asctime)s]-[%(levelname)s]-[%(module)s]-[%(funcName)s] %(message)s',
+    #                               datefmt='%Y-%m-%d %H:%M:%S')
+    formatter = logging.Formatter('%(asctime)s.%(msecs)03d|%(levelname)s|%(module)s.%(funcName)s|%(message)s',
                                   datefmt='%Y-%m-%d %H:%M:%S')
     # formatter = logging.Formatter('%(asctime)s - %(levelname)s %(message)s',
     #                               datefmt='%Y-%m-%d %H:%M:%S')
@@ -30,7 +32,7 @@ def setup():
     # add the handlers to logger
     log.addHandler(console_handler)
 
-    log.info('Initializing logs')
+    log.info('Initializing logs.')
     _initialized_flag = True
 
 
