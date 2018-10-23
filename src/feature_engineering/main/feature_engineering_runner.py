@@ -1,4 +1,5 @@
 import pandas as pd
+import time
 
 from src.utils.logger import log
 from src.feature_engineering.main.feature_engineering_params import FeatureEngineeringParams
@@ -21,11 +22,17 @@ class FeatureEngineeringRunner(object):
         self._get_feature_extractors = feature_engineering_params.get_feature_extractors()
 
     def run(self):
+
         log.debug('Running feature engineering ..')
+        fe_start_time = time.time()
 
         feature_engineering_main_output = pd.DataFrame({})
 
-        log.debug('Done running feature engineering.')
+        time.sleep(10)
+
+        fe_end_time = time.time()
+        fe_duration = round((fe_end_time - fe_start_time)/60, 2)
+        log.debug('Done running feature engineering [Total time: {} mins.].'.format(fe_duration))
 
         return feature_engineering_main_output
 
