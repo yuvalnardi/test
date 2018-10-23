@@ -31,7 +31,7 @@ class FeatureEngineeringRunner(object):
         fe_start_time = time.time()
 
         # load data
-        data = pd.DataFrame(np.random.normal(0, 1, [10, 2]), columns=['X1', 'X2'])
+        data = pd.DataFrame(np.random.normal(0, 1, [10, 2]), columns=['A', 'B'])
 
         # instantiate composite feature extractor
 

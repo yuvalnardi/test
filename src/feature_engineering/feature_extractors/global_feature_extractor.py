@@ -10,6 +10,6 @@ class GlobalFeatureExtractor(FeatureExtractorBase):
         super().__init__()
 
     def extract(self, data):
-        design_matrix = pd.DataFrame(np.random.normal(0, 1, [5, 2]))
+        design_matrix = pd.DataFrame(np.random.normal(0, 1, [5, 2]), columns=['X1', 'X2'])
 
         return design_matrix

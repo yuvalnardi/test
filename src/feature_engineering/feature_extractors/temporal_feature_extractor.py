@@ -10,6 +10,6 @@ class TemporalFeatureExtractor(FeatureExtractorBase):
         super().__init__()
 
     def extract(self, data):
-        design_matrix = pd.DataFrame(np.random.normal(10, 1, [5, 2]))
+        design_matrix = pd.DataFrame(np.random.normal(10, 1, [5, 2]), columns=['Z1', 'Z2'])
 
         return design_matrix
