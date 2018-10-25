@@ -23,7 +23,7 @@ def setup():
     #                               datefmt='%Y-%m-%d %H:%M:%S')
     # formatter = logging.Formatter('[%(asctime)s]-[%(levelname)s]-[%(module)s]-[%(funcName)s] %(message)s',
     #                               datefmt='%Y-%m-%d %H:%M:%S')
-    formatter = logging.Formatter('%(asctime)s.%(msecs)03d|%(levelname)s|%(module)s.%(funcName)s|%(message)s',
+    formatter = logging.Formatter('%(asctime)s.%(msecs)03d|%(levelname)s|%(module)s.%(funcName)s| %(message)s',
                                   datefmt='%Y-%m-%d %H:%M:%S')
     # formatter = logging.Formatter('%(asctime)s - %(levelname)s %(message)s',
     #                               datefmt='%Y-%m-%d %H:%M:%S')
