@@ -29,7 +29,7 @@ if change_timestamp_format:
     log.debug('Done persisting to csv new timestamp format.')
 else:
     log.debug('Loading single_batch data ..')
-    data = pd.read_csv('/Users/yuval/Downloads/Sensor_readings_YUVAL.csv',
+    data = pd.read_csv('/Users/yuval/Desktop/Sensor_readings_YUVAL.csv',
                        parse_dates=['end_time_stamp'],
                        infer_datetime_format=True)
     log.debug('Done loading single_batch data.')
@@ -40,3 +40,8 @@ min_timestamp_distribution = min_timestamp_per_sensor.value_counts()
 min_timestamp_distribution = min_timestamp_distribution.sort_index()
 
 print(min_timestamp_distribution)
+
+time_range_per_sensor = data.groupby('metric_id')['end_time_stamp'].aggregate(
+    lambda ts: (ts.max() - ts.min()).total_seconds() / 3600)
+
+time_range_per_sensor.value_counts().sort_index()
