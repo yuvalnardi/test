@@ -23,14 +23,14 @@ def _prepare_data_for_chart(data, batch_id, sensor_id):
     normal_batch_lower_values = pd.Series({})
     normal_batch_upper_values = pd.Series({})
 
-    data_in_chart_format = dict()
-    data_in_chart_format['batch_duration_in_minutes'] = batch_duration_in_minutes
-    data_in_chart_format['normal_batches_duration_in_minutes'] = normal_batches_duration_in_minutes
-    data_in_chart_format['batch_values'] = batch_values
-    data_in_chart_format['normal_batch_lower_values'] = normal_batch_lower_values
-    data_in_chart_format['normal_batch_upper_values'] = normal_batch_upper_values
+    data_for_chart = dict()
+    data_for_chart['batch_duration_in_minutes'] = batch_duration_in_minutes
+    data_for_chart['normal_batches_duration_in_minutes'] = normal_batches_duration_in_minutes
+    data_for_chart['batch_values'] = batch_values
+    data_for_chart['normal_batch_lower_values'] = normal_batch_lower_values
+    data_for_chart['normal_batch_upper_values'] = normal_batch_upper_values
 
-    return data_in_chart_format
+    return data_for_chart
 
 
 def create_prospect_chart(data, batch_id, sensor_id):
@@ -46,12 +46,12 @@ def create_prospect_chart(data, batch_id, sensor_id):
     assert sensor_id in data.loc[data['batch_id'] == batch_id, 'sensor_id'].unique(), s
 
     # TODO: FINISH _prepare_data_for_chart
-    data_in_chart_format = _prepare_data_for_chart(data, batch_id, sensor_id)
-    batch_duration_in_minutes = data_in_chart_format.get('batch_duration_in_minutes')
-    normal_batches_duration_in_minutes = data_in_chart_format.get('normal_batches_duration_in_minutes')
-    batch_values = data_in_chart_format.get('batch_values')
-    normal_batch_lower_values = data_in_chart_format.get('normal_batch_lower_values')
-    normal_batch_upper_values = data_in_chart_format.get('normal_batch_upper_values')
+    data_for_chart = _prepare_data_for_chart(data, batch_id, sensor_id)
+    batch_duration_in_minutes = data_for_chart.get('batch_duration_in_minutes')
+    normal_batches_duration_in_minutes = data_for_chart.get('normal_batches_duration_in_minutes')
+    batch_values = data_for_chart.get('batch_values')
+    normal_batch_lower_values = data_for_chart.get('normal_batch_lower_values')
+    normal_batch_upper_values = data_for_chart.get('normal_batch_upper_values')
 
     x = data.loc[(data['batch_id'] == batch_id) & (data['sensor_id'] == sensor_id), 'timestamp']
     batch_duration_in_minutes = [(x - x.iloc[0]).iloc[i].total_seconds() / 60 for i in range(len(x))]
