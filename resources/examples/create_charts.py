@@ -12,14 +12,14 @@ def _prepare_data_for_chart(data, batch_id, sensor_id):
     # batch data
     batch_data = data.loc[(data['batch_id'] == batch_id) & (data['sensor_id'] == sensor_id)].copy()
     batch_timestamps = batch_data['timestamp'].copy()
-    batch_duration_in_minutes = [(batch_timestamps - batch_timestamps.iloc[0]).iloc[i].total_seconds() / 60
-                                 for i in range(len(batch_timestamps))]
+    batch_duration_in_minutes = [(batch_timestamps - batch_timestamps.iloc[0]).iloc[i].total_seconds() / 60 for i in
+                                 range(len(batch_timestamps))]
+    batch_values = batch_data['value'].copy()
 
     # normal batches data
 
-    batch_duration_in_minutes = pd.Series({})
+
     normal_batches_duration_in_minutes = pd.Series({})
-    batch_values = pd.Series({})
     normal_batch_lower_values = pd.Series({})
     normal_batch_upper_values = pd.Series({})
 
