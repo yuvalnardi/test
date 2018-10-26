@@ -32,7 +32,7 @@ def generate_fake_data(n_batches=150, n_sensors=300, batch_default_probability=0
             if batch_label == 0:
                 values = np.random.normal(0, 1, len(timestamps))
             else:
-                values = np.random.normal(3, 1, len(timestamps))
+                values = np.random.normal(1.5, 1, len(timestamps))
 
             for timestamp, value in zip(timestamps, values):
                 data.append([batch_id, sensor_id, timestamp, value, batch_label])
