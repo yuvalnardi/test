@@ -53,6 +53,7 @@ def create_prospect_chart(data, batch_id, sensor_id):
     normal_batch_lower_values = data_for_chart.get('normal_batch_lower_values')
     normal_batch_upper_values = data_for_chart.get('normal_batch_upper_values')
 
+    # TODO: remove this once _prepare_data_for_chart is completed
     x = data.loc[(data['batch_id'] == batch_id) & (data['sensor_id'] == sensor_id), 'timestamp']
     batch_duration_in_minutes = [(x - x.iloc[0]).iloc[i].total_seconds() / 60 for i in range(len(x))]
     normal_batches_duration_in_minutes = batch_duration_in_minutes
