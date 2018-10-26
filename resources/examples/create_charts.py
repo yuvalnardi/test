@@ -40,10 +40,11 @@ def _prepare_data_for_chart(data, batch_id, sensor_id):
     normal_batches_duration_in_minutes = normal_batches_average_values['duration_in_minutes']
     normal_batch_averages = normal_batches_average_values['mean']
     # TODO: need to revise weights
+    # width depending on number of batches participating in the average calculation
     weights = normal_batches_average_values['len'] / normal_batches_average_values['len'].max()
     normal_batch_lower_values = normal_batch_averages - weights
     normal_batch_upper_values = normal_batch_averages + weights
-    # use +- 1 sd
+    # width depending of +- 1 std
     normal_batch_lower_values = normal_batch_averages - 1 * normal_batches_average_values['std']
     normal_batch_upper_values = normal_batch_averages + 1 * normal_batches_average_values['std']
 
