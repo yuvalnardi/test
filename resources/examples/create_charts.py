@@ -9,10 +9,19 @@ from src.utils.logger import log
 pd.set_option('display.expand_frame_repr', False)
 
 
-def _timestamp2duration_in_minutes(timestamp):
+def _timestamp2duration_in_minutes_forward_view(timestamp):
     assert isinstance(timestamp, pd.Series)
 
     duration_in_minutes = [(timestamp - timestamp.iloc[0]).iloc[i].total_seconds() / 60 for i in
+                           range(len(timestamp))]
+
+    duration_in_minutes = pd.Series(duration_in_minutes)
+    return duration_in_minutes
+
+def _timestamp2duration_in_minutes_backward_view(timestamp):
+    assert isinstance(timestamp, pd.Series)
+
+    duration_in_minutes = [(timestamp - timestamp.iloc[-1]).iloc[i].total_seconds() / 60 for i in
                            range(len(timestamp))]
 
     duration_in_minutes = pd.Series(duration_in_minutes)
@@ -24,7 +33,8 @@ def _prepare_data_for_chart(data, batch_id, sensor_id):
     batch_data = data.loc[(data['batch_id'] == batch_id) & (data['sensor_id'] == sensor_id)].copy()
     batch_timestamps = batch_data['timestamp'].copy()
     batch_timestamps = batch_timestamps.reset_index(drop=True)
-    batch_duration_in_minutes = _timestamp2duration_in_minutes(batch_timestamps)
+    batch_duration_in_minutes_forward_view = _timestamp2duration_in_minutes_forward_view(batch_timestamps)
+    batch_duration_in_minutes_backward_view = _timestamp2duration_in_minutes_backward_view(batch_timestamps)
     batch_values = batch_data['value'].copy()
     batch_values = batch_values.reset_index(drop=True)
 
@@ -32,8 +42,10 @@ def _prepare_data_for_chart(data, batch_id, sensor_id):
     normal_batches_data = data.loc[
         (data['batch_id'] != batch_id) & (data['sensor_id'] == sensor_id) & (data['batch_label'] == 0)].copy()
     assert not normal_batches_data.empty, 'There are no normal batches for the sensor id: {}.'.format(sensor_id)
+
+    # forward view
     normal_batches_data['duration_in_minutes'] = normal_batches_data.groupby('batch_id')['timestamp'].transform(
-        _timestamp2duration_in_minutes)
+        _timestamp2duration_in_minutes_forward_view)
     normal_batches_average_values = normal_batches_data.groupby('duration_in_minutes')['value'].aggregate(
         [np.mean, np.std, len]).reset_index()
 
@@ -51,7 +63,8 @@ def _prepare_data_for_chart(data, batch_id, sensor_id):
     normal_batch_upper_values = normal_batch_averages + 3 * (normal_batch_stds / np.sqrt(normal_batch_lengths))
 
     data_for_chart = dict()
-    data_for_chart['batch_duration_in_minutes'] = batch_duration_in_minutes
+    data_for_chart['batch_duration_in_minutes_forward_view'] = batch_duration_in_minutes_forward_view
+    data_for_chart['batch_duration_in_minutes_backward_view'] = batch_duration_in_minutes_backward_view
     data_for_chart['batch_values'] = batch_values
     data_for_chart['normal_batches_duration_in_minutes'] = normal_batches_duration_in_minutes
     data_for_chart['normal_batch_averages'] = normal_batch_averages
