@@ -106,8 +106,8 @@ def _prepare_data_for_chart(data, batch_id, sensor_id):
     return data_for_chart
 
 
-def create_prospect_chart(data, batch_id, sensor_id):
-    log.debug('Creating prospect charts (Forward View) for batch {} and sensor {}.'.format(
+def create_chart(data, batch_id, sensor_id, dir=None):
+    log.debug('Creating prospect/retrospect charts (Forward/Backward View) for batch {} and sensor {}.'.format(
         batch_id, sensor_id))
 
     assert isinstance(data, pd.DataFrame)
@@ -148,9 +148,9 @@ def create_prospect_chart(data, batch_id, sensor_id):
     ax[0].fill_between(normal_batches_duration_in_minutes_forward_view, normal_batch_lower_values_forward_view,
                        normal_batch_upper_values_forward_view,
                        color='lightgreen', alpha='0.2')
-    #ax[0].title('Prospect (Forward) View: Sensor id {}'.format(sensor_id), fontsize=12)
-    ax[0].set_title('Prospect (Forward) View: Sensor id {}'.format(sensor_id), size=12)
-    #ax[0].xlabel('Minutes (since start)')
+    # ax[0].title('Prospect (Forward) View: Sensor id {}'.format(sensor_id), fontsize=12)
+    ax[0].set_title('Prospect (Forward) View', size=12)
+    # ax[0].xlabel('Minutes (since start)')
     ax[0].set_xlabel('Minutes (since start)')
     ax[0].legend()
 
@@ -161,31 +161,23 @@ def create_prospect_chart(data, batch_id, sensor_id):
     ax[1].fill_between(normal_batches_duration_in_minutes_backward_view, normal_batch_lower_values_backward_view,
                        normal_batch_upper_values_backward_view,
                        color='lightgreen', alpha='0.2')
-    #ax[1].title('Retrospect (Backward) View: Sensor id {}'.format(sensor_id), fontsize=12)
-    ax[1].set_title('Retrospect (Backward) View: Sensor id {}'.format(sensor_id), size=12)
-    #ax[1].xlabel('Minutes (prior to end)')
+    # ax[1].title('Retrospect (Backward) View: Sensor id {}'.format(sensor_id), fontsize=12)
+    ax[1].set_title('Retrospect (Backward) View', size=12)
+    # ax[1].xlabel('Minutes (prior to end)')
     ax[1].set_xlabel('Minutes (prior to end)')
     ax[1].legend()
 
-    fig.show()
+    fig.suptitle('Anomaly Chart for batch id: {} and sensor id: {}'.format(batch_id, sensor_id), size=15)
+    #fig.show()
 
-    log.debug('Done creating prospect charts (Forward View) for batch {} and sensor {}.'.format(
-        batch_id, sensor_id))
+    if dir is not None:
+        file_name = 'anomaly_chart_' + 'batch_id_' + batch_id + 'sensor_id_' + sensor_id + '.pdf'
+        full_path = dir + file_name
 
+        fig.set_size_inches(10, 10)
+        fig.savefig(full_path, dpi=100)
 
-def create_retrospect_chart(data, batch_id, sensor_id):
-    log.debug('Creating retrospect charts (Backward View) for batch {} and sensor {}.'.format(
-        batch_id, sensor_id))
-
-    assert isinstance(data, pd.DataFrame)
-    expected_columns = ['batch_id', 'sensor_id', 'timestamp', 'value', 'batch_label']
-    assert set(data.columns) == set(expected_columns)
-    s = 'batch {} has no records for sensor {}'.format(batch_id, sensor_id)
-    assert sensor_id in data.loc[data['batch_id'] == batch_id, 'sensor_id'].unique(), s
-
-    # TODO:
-
-    log.debug('Done creating retrospect charts (Forward View) for batch {} and sensor {}.'.format(
+    log.debug('Done creating prospect/retrospect charts (Forward/Backward View) for batch {} and sensor {}.'.format(
         batch_id, sensor_id))
 
 
@@ -199,5 +191,5 @@ if __name__ == '__main__':
     batch_id = random.choice(abnormal_batch_ids)
     sensor_id = random.choice(data['sensor_id'].unique())
 
-    create_prospect_chart(data, batch_id, sensor_id)
-    # create_retrospect_chart(data, batch_id, sensor_id)
+    #create_chart(data, batch_id, sensor_id, dir=None)
+    create_chart(data, batch_id, sensor_id, dir='/Users/yuval/Desktop/')
