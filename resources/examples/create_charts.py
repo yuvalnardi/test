@@ -24,7 +24,11 @@ def create_prospect_chart(data, batch_id, sensor_id):
     y = data.loc[(data['batch_id'] == batch_id) & (data['sensor_id'] == sensor_id), 'value']
     y_average_normal = y + 2
 
-    lines = plt.plot(minutes_since_start, y, 'k-', minutes_since_start, y_average_normal, 'b--')
+    plt.plot(minutes_since_start, y, marker='', color='red', label='Batch id: {}'.format(batch_id))
+    plt.plot(minutes_since_start, y_average_normal, marker='', color='lightgreen', linewidth=10, label='Normal Batches')
+    plt.title('Prospect (Forward) View: Sensor id: {}'.format(sensor_id))
+    plt.xlabel('Minutes (since start)')
+    plt.legend()
     plt.show()
 
     log.debug('Done creating prospect charts (Forward View) for batch {} and sensor {}.'.format(
