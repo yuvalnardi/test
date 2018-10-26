@@ -44,8 +44,8 @@ def _prepare_data_for_chart(data, batch_id, sensor_id):
     normal_batch_lower_values = normal_batch_averages - weights
     normal_batch_upper_values = normal_batch_averages + weights
     # use +- 1 sd
-    normal_batch_lower_values = normal_batch_averages - 1*normal_batches_average_values['std']
-    normal_batch_upper_values = normal_batch_averages + 1*normal_batches_average_values['std']
+    normal_batch_lower_values = normal_batch_averages - 1 * normal_batches_average_values['std']
+    normal_batch_upper_values = normal_batch_averages + 1 * normal_batches_average_values['std']
 
     data_for_chart = dict()
     data_for_chart['batch_duration_in_minutes'] = batch_duration_in_minutes
@@ -79,15 +79,6 @@ def create_prospect_chart(data, batch_id, sensor_id):
     normal_batch_averages = data_for_chart.get('normal_batch_averages')
     normal_batch_lower_values = data_for_chart.get('normal_batch_lower_values')
     normal_batch_upper_values = data_for_chart.get('normal_batch_upper_values')
-
-    # TODO: remove this once _prepare_data_for_chart is completed
-    # x = data.loc[(data['batch_id'] == batch_id) & (data['sensor_id'] == sensor_id), 'timestamp']
-    # batch_duration_in_minutes = [(x - x.iloc[0]).iloc[i].total_seconds() / 60 for i in range(len(x))]
-    # normal_batches_duration_in_minutes = batch_duration_in_minutes
-    # batch_values = data.loc[(data['batch_id'] == batch_id) & (data['sensor_id'] == sensor_id), 'value']
-    # normal_batch_averages = batch_values + 2
-    # normal_batch_lower_values = normal_batch_averages - 0.4
-    # normal_batch_upper_values = normal_batch_averages + 0.4
 
     plt.plot(batch_duration_in_minutes, batch_values,
              marker='', color='red', label='Batch id: {}'.format(batch_id))
