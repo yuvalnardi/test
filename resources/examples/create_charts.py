@@ -22,11 +22,16 @@ def create_prospect_chart(data, batch_id, sensor_id):
     x = data.loc[(data['batch_id'] == batch_id) & (data['sensor_id'] == sensor_id), 'timestamp']
     minutes_since_start = [(x - x.iloc[0]).iloc[i].total_seconds()/60 for i in range(len(x))]
     y = data.loc[(data['batch_id'] == batch_id) & (data['sensor_id'] == sensor_id), 'value']
+
     y_average_normal = y + 2
+    y_average_normal_lower = y_average_normal - 0.4
+    y_average_normal_upper = y_average_normal + 0.4
 
     plt.plot(minutes_since_start, y, marker='', color='red', label='Batch id: {}'.format(batch_id))
-    plt.plot(minutes_since_start, y_average_normal, marker='', color='lightgreen', linewidth=10, label='Normal Batches')
-    plt.title('Prospect (Forward) View: Sensor id: {}'.format(sensor_id))
+    #plt.plot(minutes_since_start, y_average_normal, marker='', color='lightgreen', linewidth=10, label='Normal Batches')
+    plt.fill_between(minutes_since_start, y_average_normal_lower, y_average_normal_upper, color='lightgreen', alpha='0.5')
+    plt.title('Prospect (Forward) View: Sensor id {}'.format(sensor_id),
+              fontsize=15)
     plt.xlabel('Minutes (since start)')
     plt.legend()
     plt.show()
