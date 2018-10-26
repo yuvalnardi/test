@@ -18,6 +18,7 @@ def _timestamp2duration_in_minutes_forward_view(timestamp):
     duration_in_minutes = pd.Series(duration_in_minutes)
     return duration_in_minutes
 
+
 def _timestamp2duration_in_minutes_backward_view(timestamp):
     assert isinstance(timestamp, pd.Series)
 
@@ -43,33 +44,64 @@ def _prepare_data_for_chart(data, batch_id, sensor_id):
         (data['batch_id'] != batch_id) & (data['sensor_id'] == sensor_id) & (data['batch_label'] == 0)].copy()
     assert not normal_batches_data.empty, 'There are no normal batches for the sensor id: {}.'.format(sensor_id)
 
-    # forward view
-    normal_batches_data['duration_in_minutes'] = normal_batches_data.groupby('batch_id')['timestamp'].transform(
-        _timestamp2duration_in_minutes_forward_view)
-    normal_batches_average_values = normal_batches_data.groupby('duration_in_minutes')['value'].aggregate(
+    normal_batches_data['duration_in_minutes_forward_view'] = normal_batches_data.groupby('batch_id')[
+        'timestamp'].transform(_timestamp2duration_in_minutes_forward_view)
+    normal_batches_data['duration_in_minutes_backward_view'] = normal_batches_data.groupby('batch_id')[
+        'timestamp'].transform(_timestamp2duration_in_minutes_backward_view)
+
+    normal_batches_average_values_forward_view = normal_batches_data.groupby('duration_in_minutes_forward_view')[
+        'value'].aggregate(
         [np.mean, np.std, len]).reset_index()
 
-    normal_batches_duration_in_minutes = normal_batches_average_values['duration_in_minutes']
-    normal_batch_averages = normal_batches_average_values['mean']
+    normal_batches_duration_in_minutes_forward_view = normal_batches_average_values_forward_view[
+        'duration_in_minutes_forward_view']
+    normal_batch_averages_forward_view = normal_batches_average_values_forward_view['mean']
     # TODO: need to revise weights
     # width depending on number of batches participating in the average calculation
-    normal_batch_lengths = normal_batches_average_values['len']
+    normal_batch_lengths = normal_batches_average_values_forward_view['len']
     weights = normal_batch_lengths / normal_batch_lengths.max()
-    normal_batch_lower_values = normal_batch_averages - weights
-    normal_batch_upper_values = normal_batch_averages + weights
+    normal_batch_lower_values_forward_view = normal_batch_averages_forward_view - weights
+    normal_batch_upper_values_forward_view = normal_batch_averages_forward_view + weights
     # width depending of +- 3 std
-    normal_batch_stds = normal_batches_average_values['std']
-    normal_batch_lower_values = normal_batch_averages - 3 * (normal_batch_stds / np.sqrt(normal_batch_lengths))
-    normal_batch_upper_values = normal_batch_averages + 3 * (normal_batch_stds / np.sqrt(normal_batch_lengths))
+    normal_batch_stds = normal_batches_average_values_forward_view['std']
+    normal_batch_lower_values_forward_view = normal_batch_averages_forward_view - 3 * (
+            normal_batch_stds / np.sqrt(normal_batch_lengths))
+    normal_batch_upper_values_forward_view = normal_batch_averages_forward_view + 3 * (
+            normal_batch_stds / np.sqrt(normal_batch_lengths))
+
+    normal_batches_average_values_backward_view = normal_batches_data.groupby('duration_in_minutes_backward_view')[
+        'value'].aggregate([np.mean, np.std, len]).reset_index()
+
+    normal_batches_duration_in_minutes_backward_view = normal_batches_average_values_backward_view[
+        'duration_in_minutes_backward_view']
+    normal_batch_averages_backward_view = normal_batches_average_values_backward_view['mean']
+    # TODO: need to revise weights
+    # width depending on number of batches participating in the average calculation
+    normal_batch_lengths = normal_batches_average_values_backward_view['len']
+    weights = normal_batch_lengths / normal_batch_lengths.max()
+    normal_batch_lower_values_backward_view = normal_batch_averages_backward_view - weights
+    normal_batch_lower_upper_backward_view = normal_batch_averages_backward_view + weights
+    # width depending of +- 3 std
+    normal_batch_stds = normal_batches_average_values_backward_view['std']
+    normal_batch_lower_values_backward_view = normal_batch_averages_backward_view - 3 * (
+            normal_batch_stds / np.sqrt(normal_batch_lengths))
+    normal_batch_upper_values_backward_view = normal_batch_averages_backward_view + 3 * (
+            normal_batch_stds / np.sqrt(normal_batch_lengths))
 
     data_for_chart = dict()
     data_for_chart['batch_duration_in_minutes_forward_view'] = batch_duration_in_minutes_forward_view
     data_for_chart['batch_duration_in_minutes_backward_view'] = batch_duration_in_minutes_backward_view
     data_for_chart['batch_values'] = batch_values
-    data_for_chart['normal_batches_duration_in_minutes'] = normal_batches_duration_in_minutes
-    data_for_chart['normal_batch_averages'] = normal_batch_averages
-    data_for_chart['normal_batch_lower_values'] = normal_batch_lower_values
-    data_for_chart['normal_batch_upper_values'] = normal_batch_upper_values
+    data_for_chart['normal_batches_duration_in_minutes_forward_view'] = normal_batches_duration_in_minutes_forward_view
+    data_for_chart[
+        'normal_batches_duration_in_minutes_backward_view'] = normal_batches_duration_in_minutes_backward_view
+    data_for_chart['normal_batch_averages_forward_view'] = normal_batch_averages_forward_view
+    data_for_chart['normal_batch_lower_values_forward_view'] = normal_batch_lower_values_forward_view
+    data_for_chart['normal_batch_upper_values_forward_view'] = normal_batch_upper_values_forward_view
+
+    data_for_chart['normal_batch_averages_backward_view'] = normal_batch_averages_backward_view
+    data_for_chart['normal_batch_lower_values_backward_view'] = normal_batch_lower_values_backward_view
+    data_for_chart['normal_batch_upper_values_backward_view'] = normal_batch_upper_values_backward_view
 
     return data_for_chart
 
@@ -87,25 +119,55 @@ def create_prospect_chart(data, batch_id, sensor_id):
     s = 'batch {} has no records for sensor {}'.format(batch_id, sensor_id)
     assert sensor_id in data.loc[data['batch_id'] == batch_id, 'sensor_id'].unique(), s
 
-    # TODO: FINISH _prepare_data_for_chart
     data_for_chart = _prepare_data_for_chart(data, batch_id, sensor_id)
-    batch_duration_in_minutes = data_for_chart.get('batch_duration_in_minutes')
-    batch_values = data_for_chart.get('batch_values')
-    normal_batches_duration_in_minutes = data_for_chart.get('normal_batches_duration_in_minutes')
-    normal_batch_averages = data_for_chart.get('normal_batch_averages')
-    normal_batch_lower_values = data_for_chart.get('normal_batch_lower_values')
-    normal_batch_upper_values = data_for_chart.get('normal_batch_upper_values')
 
-    plt.plot(batch_duration_in_minutes, batch_values,
-             marker='', color='red', label='Batch id: {}'.format(batch_id))
-    plt.plot(normal_batches_duration_in_minutes, normal_batch_averages,
-             marker='', color='green', linewidth=3, label='Normal Batches (avg.)')
-    plt.fill_between(normal_batches_duration_in_minutes, normal_batch_lower_values, normal_batch_upper_values,
-                     color='lightgreen', alpha='0.2')
-    plt.title('Prospect (Forward) View: Sensor id {}'.format(sensor_id), fontsize=15)
-    plt.xlabel('Minutes (since start)')
-    plt.legend()
-    plt.show()
+    # forward view
+    batch_duration_in_minutes_forward_view = data_for_chart.get('batch_duration_in_minutes_forward_view')
+    batch_values = data_for_chart.get('batch_values')
+    normal_batches_duration_in_minutes_forward_view = data_for_chart.get(
+        'normal_batches_duration_in_minutes_forward_view')
+    normal_batch_averages_forward_view = data_for_chart.get('normal_batch_averages_forward_view')
+    normal_batch_lower_values_forward_view = data_for_chart.get('normal_batch_lower_values_forward_view')
+    normal_batch_upper_values_forward_view = data_for_chart.get('normal_batch_upper_values_forward_view')
+
+    # backward view
+    batch_duration_in_minutes_backward_view = data_for_chart.get('batch_duration_in_minutes_backward_view')
+    batch_values = data_for_chart.get('batch_values')
+    normal_batches_duration_in_minutes_backward_view = data_for_chart.get(
+        'normal_batches_duration_in_minutes_backward_view')
+    normal_batch_averages_backward_view = data_for_chart.get('normal_batch_averages_backward_view')
+    normal_batch_lower_values_backward_view = data_for_chart.get('normal_batch_lower_values_backward_view')
+    normal_batch_upper_values_backward_view = data_for_chart.get('normal_batch_upper_values_backward_view')
+
+    fig, ax = plt.subplots(2, 1)
+
+    ax[0].plot(batch_duration_in_minutes_forward_view, batch_values,
+               marker='', color='red', label='Batch id: {}'.format(batch_id))
+    ax[0].plot(normal_batches_duration_in_minutes_forward_view, normal_batch_averages_forward_view,
+               marker='', color='green', linewidth=3, label='Normal Batches (avg.)')
+    ax[0].fill_between(normal_batches_duration_in_minutes_forward_view, normal_batch_lower_values_forward_view,
+                       normal_batch_upper_values_forward_view,
+                       color='lightgreen', alpha='0.2')
+    #ax[0].title('Prospect (Forward) View: Sensor id {}'.format(sensor_id), fontsize=12)
+    ax[0].set_title('Prospect (Forward) View: Sensor id {}'.format(sensor_id), size=12)
+    #ax[0].xlabel('Minutes (since start)')
+    ax[0].set_xlabel('Minutes (since start)')
+    ax[0].legend()
+
+    ax[1].plot(batch_duration_in_minutes_backward_view, batch_values,
+               marker='', color='red', label='Batch id: {}'.format(batch_id))
+    ax[1].plot(normal_batches_duration_in_minutes_backward_view, normal_batch_averages_backward_view,
+               marker='', color='green', linewidth=3, label='Normal Batches (avg.)')
+    ax[1].fill_between(normal_batches_duration_in_minutes_backward_view, normal_batch_lower_values_backward_view,
+                       normal_batch_upper_values_backward_view,
+                       color='lightgreen', alpha='0.2')
+    #ax[1].title('Retrospect (Backward) View: Sensor id {}'.format(sensor_id), fontsize=12)
+    ax[1].set_title('Retrospect (Backward) View: Sensor id {}'.format(sensor_id), size=12)
+    #ax[1].xlabel('Minutes (prior to end)')
+    ax[1].set_xlabel('Minutes (prior to end)')
+    ax[1].legend()
+
+    fig.show()
 
     log.debug('Done creating prospect charts (Forward View) for batch {} and sensor {}.'.format(
         batch_id, sensor_id))
