@@ -32,6 +32,7 @@ class FeatureEngineeringRunner(object):
 
         # load data
         data = pd.DataFrame(np.random.normal(0, 1, [10, 2]), columns=['A', 'B'])
+        # TODO: validate every batch has the same sensors data
 
         # instantiate composite feature extractor
 
