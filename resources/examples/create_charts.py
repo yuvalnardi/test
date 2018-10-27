@@ -106,6 +106,32 @@ def _prepare_data_for_chart(data, batch_id, sensor_id):
     return data_for_chart
 
 
+def _validate_and_sort_data_prior_to_charting(data, batch_id, sensor_id):
+    expected_columns = ['batch_id', 'sensor_id', 'timestamp', 'value', 'batch_label']
+    assert set(data.columns) == set(expected_columns)
+
+    assert set(data['batch_label'].unique()) == set(np.array([0, 1]))
+
+    assert (data.loc[data['batch_id'] == batch_id, 'batch_label'] == 1).all(), 'batch_id should be an abnormal batch.'
+
+    s = 'batch {} has no records for sensor {}.'.format(batch_id, sensor_id)
+    assert sensor_id in data.loc[data['batch_id'] == batch_id, 'sensor_id'].unique(), s
+
+    normal_batches = data.loc[data['batch_label'] == 0].copy()
+    number_of_normal_batches = len(normal_batches['batch_id'].unique())
+    assert not normal_batches.empty, 'There are no normal batches.'
+    s = 'At least one normal batch has no records for sensor: {}.'.format(sensor_id)
+    assert normal_batches.groupby('batch_id')['sensor_id'].aggregate(
+        lambda ts: sensor_id in ts.unique()).sum() == number_of_normal_batches, s
+
+    # sort data by (batch_id, sensor_id, timestamp)
+    data = data.sort_values(by=['batch_id', 'sensor_id', 'timestamp'], inplace=False)
+
+    log.debug('Done validating and sorting data by (batch_id, sensor_id, timestamp) prior to charting.')
+
+    return data
+
+
 def create_chart(data, batch_id, sensor_id, dir=None):
     log.debug('Creating prospect/retrospect charts (Forward/Backward View) for batch {} and sensor {}.'.format(
         batch_id, sensor_id))
@@ -118,6 +144,8 @@ def create_chart(data, batch_id, sensor_id, dir=None):
     assert set(data.columns) == set(expected_columns)
     s = 'batch {} has no records for sensor {}'.format(batch_id, sensor_id)
     assert sensor_id in data.loc[data['batch_id'] == batch_id, 'sensor_id'].unique(), s
+
+    data = _validate_and_sort_data_prior_to_charting(data, batch_id, sensor_id)
 
     data_for_chart = _prepare_data_for_chart(data, batch_id, sensor_id)
 
@@ -168,7 +196,7 @@ def create_chart(data, batch_id, sensor_id, dir=None):
     ax[1].legend()
 
     fig.suptitle('Anomaly Chart for batch id: {} and sensor id: {}'.format(batch_id, sensor_id), size=15)
-    #fig.show()
+    # fig.show()
 
     if dir is not None:
         file_name = 'anomaly_chart_' + 'batch_id_' + batch_id + 'sensor_id_' + sensor_id + '.pdf'
@@ -191,5 +219,5 @@ if __name__ == '__main__':
     batch_id = random.choice(abnormal_batch_ids)
     sensor_id = random.choice(data['sensor_id'].unique())
 
-    #create_chart(data, batch_id, sensor_id, dir=None)
+    # create_chart(data, batch_id, sensor_id, dir=None)
     create_chart(data, batch_id, sensor_id, dir='/Users/yuval/Desktop/')
