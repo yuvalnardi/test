@@ -132,10 +132,11 @@ def _validate_and_sort_data_prior_to_charting(data, batch_id, sensor_id):
     return data
 
 
-def create_chart(data, batch_id, sensor_id, dir=None):
+def create_chart(data, batch_id, sensor_id, dir=None, show=True):
     log.debug('Creating prospect/retrospect charts (Forward/Backward View) for batch {} and sensor {}.'.format(
         batch_id, sensor_id))
 
+    assert isinstance(show, bool)
     assert isinstance(data, pd.DataFrame)
     assert not pd.isnull(data).any().any(), 'Data have missing values. Please check.'
     assert isinstance(batch_id, str)
@@ -196,7 +197,9 @@ def create_chart(data, batch_id, sensor_id, dir=None):
     ax[1].legend()
 
     fig.suptitle('Anomaly Chart for batch id: {} and sensor id: {}'.format(batch_id, sensor_id), size=15)
-    # fig.show()
+
+    if show:
+        fig.show()
 
     if dir is not None:
         file_name = 'anomaly_chart_' + 'batch_id_' + batch_id + 'sensor_id_' + sensor_id + '.pdf'
@@ -219,5 +222,5 @@ if __name__ == '__main__':
     batch_id = random.choice(abnormal_batch_ids)
     sensor_id = random.choice(data['sensor_id'].unique())
 
-    # create_chart(data, batch_id, sensor_id, dir=None)
-    create_chart(data, batch_id, sensor_id, dir='/Users/yuval/Desktop/')
+    # create_chart(data, batch_id, sensor_id, dir=None, show=True)
+    create_chart(data, batch_id, sensor_id, dir='/Users/yuval/Desktop/', show=True)
