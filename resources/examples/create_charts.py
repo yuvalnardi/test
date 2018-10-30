@@ -215,7 +215,6 @@ def create_chart(data, batch_id, sensor_id, dir=None, show=True):
 if __name__ == '__main__':
     fullpath = '/Users/yuval/Desktop/mock_data.csv'
     data = pd.read_csv(fullpath, parse_dates=['timestamp'], infer_datetime_format=True)
-    # TODO: add sorting by batch_id, sensor_id, timestamp
 
     abnormal_batch_ids = data.loc[data['batch_label'] == 1, 'batch_id'].unique()
     assert len(abnormal_batch_ids) > 0, 'There is no abnormal batch in the data.'
