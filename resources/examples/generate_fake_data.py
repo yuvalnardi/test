@@ -6,6 +6,8 @@ import datetime
 
 from src.utils.logger import log
 
+# pd.set_option('display.max_rows', None, 'display.max_columns', None)
+pd.set_option('display.expand_frame_repr', False)
 
 def generate_fake_data(n_batches=150, n_sensors=300, batch_default_probability=0.3):
     log.debug('Generating fake data: {} batches, {} sensors.'.format(n_batches, n_sensors))
