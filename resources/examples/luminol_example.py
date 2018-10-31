@@ -47,7 +47,11 @@ keys = ts['epoch']
 values = ts['value']
 ts_dict = dict(zip(keys, values))
 
-plt.plot(ts['timestamp'], ts['value'])
+ts = ts.set_index('timestamp')
+
+plt.plot(ts['value'])
+ts['value'].plot() # use pd.Series plot method
+ts['value']['2016-10-16':'2016-10-18'].plot() # plot a slice of the time series
 plt.show()
 
 my_detector = AnomalyDetector(ts_dict)
