@@ -39,16 +39,16 @@ from luminol.utils import to_epoch
 path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/g.csv'
 ts = pd.read_csv(path) # , parse_dates=['timestamp'], infer_datetime_format=True)
 ts = ts.iloc[0:10000]
-# convert to epoch (unix time)
-#ts['epoch'] = ts['timestamp'].transform(lambda timestamp: to_epoch(timestamp))
+ts.rename(columns={'timestamp': 'epoch'}, inplace=True)
+# convert to timestamp
+ts['timestamp'] = pd.to_datetime(ts['epoch'], unit='s')
 
-keys = ts['timestamp']
+keys = ts['epoch']
 values = ts['value']
 ts_dict = dict(zip(keys, values))
 
-plt.plot(ts['value'])
+plt.plot(ts['timestamp'], ts['value'])
 plt.show()
-
 
 my_detector = AnomalyDetector(ts_dict)
 score = my_detector.get_all_scores()
