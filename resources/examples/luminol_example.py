@@ -184,7 +184,7 @@ if __name__ == '__main__':
         fill='tonexty',
         mode='lines',
         opacity=0.05,
-        line=dict(color='rgb(143, 19, 131)',
+        line=dict(color='gray',
         )
     )
 
