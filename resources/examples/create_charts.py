@@ -219,26 +219,31 @@ def create_anomalous_charts(data, anomalous_batch_id, sensor_id, dir=None, show=
             x=normal_batches_duration_in_minutes_forward_view,
             y=normal_batches_averages_forward_view,
             name='Normal Batches',
-            line=dict(color='green'))
+            line=dict(color='green', width=4))
         normal_batches_lower = go.Scatter(
             x=normal_batches_duration_in_minutes_forward_view,
             y=normal_batches_lower_values_forward_view,
             name='lower',
             hoverinfo='skip',
             fill=None,
-            mode='lines')
+            mode='lines',
+            line=dict(color='lightgreen'))
         normal_batches_upper = go.Scatter(
             x=normal_batches_duration_in_minutes_forward_view,
             y=normal_batches_upper_values_forward_view,
             name='upper',
             hoverinfo='skip',
             fill='tonexty',
+            fillcolor='lightgreen',
             mode='lines',
-            opacity=0.05,
+            opacity=0.005,
             line=dict(color='lightgreen'))
 
-        data = [abnormal_batch, normal_batches_average, normal_batches_lower, normal_batches_upper]
-        plot(data)
+        data = [normal_batches_lower, normal_batches_upper, abnormal_batch, normal_batches_average]
+        layout = dict(title='Yuval Nardi')
+
+        fig = dict(data=data, layout=layout)
+        plot(fig)
 
     log.debug('Done creating prospect/retrospect charts (Forward/Backward View) for batch {} and sensor {}.'.format(
         anomalous_batch_id, sensor_id))
@@ -254,4 +259,5 @@ if __name__ == '__main__':
     sensor_id = random.choice(data['sensor_id'].unique())
 
     # create_anomalous_charts(data, batch_id, sensor_id, dir=None, show=True)
-    create_anomalous_charts(data, anomalous_batch_id, sensor_id, dir='/Users/yuval/Desktop/', show=True, plotly=True)
+    # create_anomalous_charts(data, anomalous_batch_id, sensor_id, dir='/Users/yuval/Desktop/', show=True, plotly=True)
+    create_anomalous_charts(data, anomalous_batch_id, sensor_id, dir=None, show=False, plotly=True)
