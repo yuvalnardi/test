@@ -132,7 +132,7 @@ def plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir=None
 
 if __name__ == '__main__':
     path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/g.csv'
-    ts = load_ts_data(path, epoch_col='timestamp', n_rows=50000)
+    ts = load_ts_data(path, epoch_col='timestamp', n_rows=5000)
 
     # path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/art_noisy.csv'
     # ts = load_ts_data(path, timestamp_col='timestamp', n_rows=1000)
@@ -149,5 +149,11 @@ if __name__ == '__main__':
     anomaly_detector = AnomalyDetector(ts_dict, algorithm_name=algorithm_name)
     anomalies = anomaly_detector.get_anomalies()
     anomaly_scores = anomaly_detector.get_all_scores()
+
+    # plotly offline example
+    # from plotly.offline import plot
+    # import plotly.graph_objs as go
+    # data = [go.Scatter(x=ts['timestamp'], y=ts['value'])]
+    # plot(data)
 
     plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir='/Users/yuval/Desktop/', show=True)
