@@ -214,6 +214,7 @@ def create_anomalous_charts(data, anomalous_batch_id, sensor_id, dir=None, show=
             x=batch_duration_in_minutes_forward_view,
             y=batch_values,
             name='Abnormal Batch',
+            mode='lines+markers',
             line=dict(color='red'))
         normal_batches_average = go.Scatter(
             x=normal_batches_duration_in_minutes_forward_view,
