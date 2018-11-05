@@ -227,7 +227,8 @@ def create_anomalous_charts(data, anomalous_batch_id, sensor_id, dir=None, show=
             hoverinfo='skip',
             fill=None,
             mode='lines',
-            line=dict(color='lightgreen'))
+            line=dict(color='lightgreen'),
+            showlegend=False)
         normal_batches_upper = go.Scatter(
             x=normal_batches_duration_in_minutes_forward_view,
             y=normal_batches_upper_values_forward_view,
@@ -237,7 +238,8 @@ def create_anomalous_charts(data, anomalous_batch_id, sensor_id, dir=None, show=
             fillcolor='lightgreen',
             mode='lines',
             opacity=0.005,
-            line=dict(color='lightgreen'))
+            line=dict(color='lightgreen'),
+            showlegend=False)
 
         data = [normal_batches_lower, normal_batches_upper, abnormal_batch, normal_batches_average]
         layout = dict(title='Yuval Nardi')
