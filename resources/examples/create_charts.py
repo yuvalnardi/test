@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import random
 import matplotlib.pyplot as plt
+from plotly.offline import plot
+import plotly.graph_objs as go
 
 from src.utils.logger import log
 
@@ -136,7 +138,7 @@ def _validate_and_sort_data_prior_to_charting(data, anomalous_batch_id, sensor_i
     return data
 
 
-def create_anomalous_charts(data, anomalous_batch_id, sensor_id, dir=None, show=True):
+def create_anomalous_charts(data, anomalous_batch_id, sensor_id, dir=None, show=True, plotly=False):
     log.debug('Creating prospect/retrospect charts (Forward/Backward View) for batch {} and sensor {}.'.format(
         anomalous_batch_id, sensor_id))
 
@@ -207,44 +209,39 @@ def create_anomalous_charts(data, anomalous_batch_id, sensor_id, dir=None, show=
         fig.set_size_inches(10, 10)
         fig.savefig(full_path, dpi=100)
 
+    if plotly:
+        abnormal_batch = go.Scatter(
+            x=batch_duration_in_minutes_forward_view,
+            y=batch_values,
+            name='Abnormal Batch',
+            line=dict(color='red'))
+        normal_batches_average = go.Scatter(
+            x=normal_batches_duration_in_minutes_forward_view,
+            y=normal_batches_averages_forward_view,
+            name='Normal Batches',
+            line=dict(color='green'))
+        normal_batches_lower = go.Scatter(
+            x=normal_batches_duration_in_minutes_forward_view,
+            y=normal_batches_lower_values_forward_view,
+            name='lower',
+            hoverinfo='skip',
+            fill=None,
+            mode='lines')
+        normal_batches_upper = go.Scatter(
+            x=normal_batches_duration_in_minutes_forward_view,
+            y=normal_batches_upper_values_forward_view,
+            name='upper',
+            hoverinfo='skip',
+            fill='tonexty',
+            mode='lines',
+            opacity=0.05,
+            line=dict(color='lightgreen'))
+
+        data = [abnormal_batch, normal_batches_average, normal_batches_lower, normal_batches_upper]
+        plot(data)
+
     log.debug('Done creating prospect/retrospect charts (Forward/Backward View) for batch {} and sensor {}.'.format(
         anomalous_batch_id, sensor_id))
-
-    # plotly - testing
-    from plotly.offline import plot
-    import plotly.graph_objs as go
-
-    abnormal_batch = go.Scatter(
-        x=batch_duration_in_minutes_forward_view,
-        y=batch_values,
-        name='abnormal batch',
-        line=dict(color='red'),
-        opacity=1.0)
-    normal_batches = go.Scatter(
-        x=normal_batches_duration_in_minutes_forward_view,
-        y=normal_batches_averages_forward_view,
-        name='normal batches',
-        line=dict(color='green'),
-        opacity=1.0)
-    lower = go.Scatter(
-        x=normal_batches_duration_in_minutes_forward_view,
-        y=normal_batches_lower_values_forward_view,
-        name='lower',
-        hoverinfo='skip',
-        fill=None,
-        mode='lines')
-    upper = go.Scatter(
-        x=normal_batches_duration_in_minutes_forward_view,
-        y=normal_batches_upper_values_forward_view,
-        name='upper',
-        hoverinfo='skip',
-        fill='tonexty',
-        mode='lines',
-        opacity=0.05,
-        line=dict(color='lightgreen'))
-
-    data = [abnormal_batch, normal_batches, lower, upper]
-    plot(data)
 
 
 if __name__ == '__main__':
@@ -257,4 +254,4 @@ if __name__ == '__main__':
     sensor_id = random.choice(data['sensor_id'].unique())
 
     # create_anomalous_charts(data, batch_id, sensor_id, dir=None, show=True)
-    create_anomalous_charts(data, anomalous_batch_id, sensor_id, dir='/Users/yuval/Desktop/', show=True)
+    create_anomalous_charts(data, anomalous_batch_id, sensor_id, dir='/Users/yuval/Desktop/', show=True, plotly=True)
