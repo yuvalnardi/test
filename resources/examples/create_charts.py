@@ -235,14 +235,13 @@ def create_anomalous_charts(data, anomalous_batch_id, sensor_id, dir=None, show=
             name='upper',
             hoverinfo='skip',
             fill='tonexty',
-            fillcolor='lightgreen',
+            #fillcolor='lightgreen',
             mode='lines',
-            opacity=0.005,
             line=dict(color='lightgreen'),
             showlegend=False)
 
         data = [normal_batches_lower, normal_batches_upper, abnormal_batch, normal_batches_average]
-        layout = dict(title='Yuval Nardi')
+        layout = dict(title='Prospect')
 
         fig = dict(data=data, layout=layout)
         plot(fig)
