@@ -154,20 +154,45 @@ if __name__ == '__main__':
     from plotly.offline import plot
     import plotly.graph_objs as go
 
-    one = go.Scatter(
-        x=ts['timestamp'],
-        y=ts['value'],
-        name='one',
-        line=dict(color='#17BECF'),
-        opacity=1.0)
+    # one = go.Scatter(
+    #     x=ts['timestamp'],
+    #     y=ts['value'],
+    #     name='one',
+    #     line=dict(color='#17BECF'),
+    #     opacity=1.0)
+    #
+    # two = go.Scatter(
+    #     x=ts['timestamp'],
+    #     y=ts['value']+0.2,
+    #     name='twi',
+    #     line=dict(color='#7F7F7F'),
+    #     opacity=1.0)
+    # data = [one, two]
+    # plot(data)
 
-    two = go.Scatter(
-        x=ts['timestamp'],
-        y=ts['value']+0.2,
-        name='twi',
-        line=dict(color='#7F7F7F'),
-        opacity=1.0)
-    data = [one, two]
+    trace0 = go.Scatter(
+        x=[1, 2, 3, 4],
+        y=[3, 4, 8, 3],
+        fill=None,
+        mode='lines',
+        line=dict(color='rgb(143, 19, 131)',
+        )
+    )
+    trace1 = go.Scatter(
+        x=[1, 2, 3, 4],
+        y=[5, 6, 10, 5],
+        fill='tonexty',
+        mode='lines',
+        opacity=0.05,
+        line=dict(color='rgb(143, 19, 131)',
+        )
+    )
+
+    d = go.Scatter(
+        x=[1, 2, 3, 4],
+        y=[4, 5, 9, 4])
+
+    data = [trace0, trace1, d]
     plot(data)
 
     plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir='/Users/yuval/Desktop/', show=True)
