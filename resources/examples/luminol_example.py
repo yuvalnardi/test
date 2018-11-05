@@ -132,7 +132,7 @@ def plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir=None
 
 if __name__ == '__main__':
     path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/g.csv'
-    ts = load_ts_data(path, epoch_col='timestamp', n_rows=5000)
+    ts = load_ts_data(path, epoch_col='timestamp', n_rows=10000)
 
     # path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/art_noisy.csv'
     # ts = load_ts_data(path, timestamp_col='timestamp', n_rows=1000)
@@ -151,9 +151,23 @@ if __name__ == '__main__':
     anomaly_scores = anomaly_detector.get_all_scores()
 
     # plotly offline example
-    # from plotly.offline import plot
-    # import plotly.graph_objs as go
-    # data = [go.Scatter(x=ts['timestamp'], y=ts['value'])]
-    # plot(data)
+    from plotly.offline import plot
+    import plotly.graph_objs as go
+
+    one = go.Scatter(
+        x=ts['timestamp'],
+        y=ts['value'],
+        name='one',
+        line=dict(color='#17BECF'),
+        opacity=1.0)
+
+    two = go.Scatter(
+        x=ts['timestamp'],
+        y=ts['value']+0.2,
+        name='twi',
+        line=dict(color='#7F7F7F'),
+        opacity=1.0)
+    data = [one, two]
+    plot(data)
 
     plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir='/Users/yuval/Desktop/', show=True)
