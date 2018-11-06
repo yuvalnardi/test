@@ -139,29 +139,32 @@ def plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir=None
             fig.savefig(full_path, dpi=100)
 
         if plotly:
-            file_name = 'ts_and_anomaly_scores.html'
-            full_path = dir + file_name
-            time_series = go.Scatter(
-                x=ts['epoch'],
-                y=ts['value'],
-                name='ts',
-                mode='lines',
-                line=dict(color='blue'))
-            anomaly_scores = go.Scatter(
-                x=ts['epoch'],
-                y=scores,
-                name='scores',
-                line=dict(color='red'))
+            if dir is not None:
+                file_name = 'ts_and_anomaly_scores.html'
+                full_path = dir + file_name
+                time_series = go.Scatter(
+                    x=ts['epoch'],
+                    y=ts['value'],
+                    name='ts',
+                    mode='lines',
+                    line=dict(color='blue'))
+                anomaly_scores = go.Scatter(
+                    x=ts['epoch'],
+                    y=scores,
+                    name='scores',
+                    line=dict(color='red'))
 
-            fig = tools.make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
-                                      shared_xaxes=True, shared_yaxes=False)
+                fig = tools.make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
+                                          shared_xaxes=True, shared_yaxes=False)
 
-            fig.append_trace(time_series, 1, 1)
-            fig.append_trace(anomaly_scores, 2, 1)
+                fig.append_trace(time_series, 1, 1)
+                fig.append_trace(anomaly_scores, 2, 1)
 
-            #fig['layout'].update(height=600, width=800, title='Time series and anomaly scores')
-            fig['layout'].update(title='Time series and anomaly scores')
-            plot(fig, filename=full_path)
+                #fig['layout'].update(height=600, width=800, title='Time series and anomaly scores')
+                fig['layout'].update(title='Time series and anomaly scores')
+                plot(fig, filename=full_path)
+            else:
+                log.debug('Need to supply a dir in order for to generate plotly chart.')
 
 
 if __name__ == '__main__':
