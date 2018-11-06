@@ -91,21 +91,24 @@ def plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir=None
             scores.append(value)
 
         fig, ax = plt.subplots(2, 1)
-        # ax[0] = ts['value'].plot()  # use pd.Series plot method
-        # #ts['value']['2016-10-16':'2016-10-18'].plot()  # plot a slice of the time series
-        # ax[1] = anomaly_score.plot()
 
         # plot ts
-        ax[0].plot(ts['epoch'], ts['value'], color='blue')
+        # ax[0].plot(ts['epoch'], ts['value'], color='blue')
+        ax[0].plot_date(ts['timestamp'], ts['value'], color='blue', fmt='-')
         ax[0].set_title('ts', size=12)
 
         # plot anomalies on top of ts
         for anomaly in anomalies:
             anomay_time_window = anomaly.get_time_window()
-            ax[0].axvspan(anomay_time_window[0], anomay_time_window[1], alpha=0.5, color='gray')
+            epoch_left = anomay_time_window[0]
+            epoch_right = anomay_time_window[1]
+            timestamp_left = ts.loc[ts['epoch'] == epoch_left, 'timestamp'].values[0]
+            timestamp_right = ts.loc[ts['epoch'] == epoch_right, 'timestamp'].values[0]
+            ax[0].axvspan(timestamp_left, timestamp_right, alpha=0.5, color='gray')
 
         # plot anomaly scores
-        ax[1].plot(ts['epoch'], scores, color='red')
+        # ax[1].plot(ts['epoch'], scores, color='red')
+        ax[1].plot_date(ts['timestamp'], scores, color='red', fmt='-')
         ax[1].set_title('scores', size=12)
 
         if show:
@@ -140,7 +143,7 @@ def plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir=None
                 fig.append_trace(time_series, 1, 1)
                 fig.append_trace(anomaly_scores, 2, 1)
 
-                #fig['layout'].update(height=600, width=800, title='Time series and anomaly scores')
+                # fig['layout'].update(height=600, width=800, title='Time series and anomaly scores')
                 fig['layout'].update(title='Time series and anomaly scores')
                 plot(fig, filename=full_path)
             else:
