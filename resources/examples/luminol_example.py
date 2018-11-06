@@ -171,4 +171,4 @@ if __name__ == '__main__':
     anomaly_scores = anomaly_detector.get_all_scores()
 
     plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir='/Users/yuval/Desktop/',
-                          show=False, plotly=False)
+                          show=False, plotly=True)
