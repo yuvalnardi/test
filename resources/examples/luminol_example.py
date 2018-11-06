@@ -1,7 +1,11 @@
 import numpy as np
 import pandas as pd
 import time
+import os
 import matplotlib.pyplot as plt
+from plotly import tools
+from plotly.offline import plot
+import plotly.graph_objs as go
 from luminol.anomaly_detector import AnomalyDetector
 from luminol.modules.time_series import TimeSeries
 
@@ -51,13 +55,18 @@ def load_ts_data(path, timestamp_col=None, epoch_col=None, set_index=False, n_ro
     return ts
 
 
-def plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir=None, show=True):
+def plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir=None, show=True, plotly=False):
     assert isinstance(ts, pd.DataFrame)
     assert isinstance(anomalies, list)
     assert isinstance(anomaly_scores, TimeSeries)
     assert isinstance(ts_only, bool)
     assert isinstance(dir, (str, type(None)))
+    if dir is not None:
+        assert dir[-1] == '/'
+    if not os.path.exists(dir):
+        os.makedirs(dir)
     assert isinstance(show, bool)
+    assert isinstance(plotly, bool)
 
     if (len(anomalies) == 0) or ts_only:
         # plot ts only
@@ -123,11 +132,36 @@ def plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir=None
             fig.show()
 
         if dir is not None:
-            file_name = 'yuval' + '.pdf'
+            file_name = 'ts_and_anomaly_scores.pdf'
             full_path = dir + file_name
 
             fig.set_size_inches(10, 10)
             fig.savefig(full_path, dpi=100)
+
+        if plotly:
+            file_name = 'ts_and_anomaly_scores.html'
+            full_path = dir + file_name
+            time_series = go.Scatter(
+                x=ts['epoch'],
+                y=ts['value'],
+                name='ts',
+                mode='lines',
+                line=dict(color='blue'))
+            anomaly_scores = go.Scatter(
+                x=ts['epoch'],
+                y=scores,
+                name='scores',
+                line=dict(color='red'))
+
+            fig = tools.make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
+                                      shared_xaxes=True, shared_yaxes=False)
+
+            fig.append_trace(time_series, 1, 1)
+            fig.append_trace(anomaly_scores, 2, 1)
+
+            #fig['layout'].update(height=600, width=800, title='Time series and anomaly scores')
+            fig['layout'].update(title='Time series and anomaly scores')
+            plot(fig, filename=full_path)
 
 
 if __name__ == '__main__':
@@ -150,24 +184,5 @@ if __name__ == '__main__':
     anomalies = anomaly_detector.get_anomalies()
     anomaly_scores = anomaly_detector.get_all_scores()
 
-    # plotly offline example
-    from plotly.offline import plot
-    import plotly.graph_objs as go
-
-    one = go.Scatter(
-        x=ts['timestamp'],
-        y=ts['value'],
-        name='ts_1',
-        line=dict(color='purple'),
-        opacity=1.0)
-
-    two = go.Scatter(
-        x=ts['timestamp'],
-        y=ts['value'] + 0.2,
-        name='ts_2',
-        line=dict(color='orange'),
-        opacity=1.0)
-    data = [one, two]
-    plot(data)
-
-    plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=True, dir='/Users/yuval/Desktop/', show=True)
+    plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir='/Users/yuval/Desktop/',
+                          show=False, plotly=True)
