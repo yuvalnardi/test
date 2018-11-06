@@ -143,13 +143,13 @@ def plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir=None
                 file_name = 'ts_and_anomaly_scores.html'
                 full_path = dir + file_name
                 time_series = go.Scatter(
-                    x=ts['epoch'],
+                    x=ts['timestamp'],
                     y=ts['value'],
                     name='ts',
                     mode='lines',
                     line=dict(color='blue'))
                 anomaly_scores = go.Scatter(
-                    x=ts['epoch'],
+                    x=ts['timestamp'],
                     y=scores,
                     name='scores',
                     line=dict(color='red'))
