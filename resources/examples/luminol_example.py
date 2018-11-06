@@ -100,29 +100,9 @@ def plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir=None
         ax[0].set_title('ts', size=12)
 
         # plot anomalies on top of ts
-        # TODO: add anomaly ranges and plot them
-        min = ts['value'].min()
-        max = ts['value'].max()
         for anomaly in anomalies:
-            # anomay_time_window = anomaly.get_time_window()
-            # if anomay_time_window[0] == anomay_time_window[1]:
-            #     anomay_exact_epoch = anomaly.exact_timestamp
-            #     ax[0].plot([anomay_exact_epoch, anomay_exact_epoch], [min, max], color='gray')
-            # else:
-            #     # TODO: make sure the RHS is taken into consideration
-            #     anomaly_time_range = range(anomay_time_window[0], anomay_time_window[1])
-            #     for tm in anomaly_time_range:
-            #         ax[0].plot([tm, tm], [min, max], color='gray')
-
             anomay_time_window = anomaly.get_time_window()
-            if anomay_time_window[0] == anomay_time_window[1]:
-                # anomay_exact_epoch = anomaly.exact_timestamp
-                # ax[0].plot([anomay_exact_epoch, anomay_exact_epoch], [min, max], color='gray')
-                print('gg')
-            else:
-                anomaly_time_range = range(anomay_time_window[0], anomay_time_window[1])
-                ax[0].fill_between(anomaly_time_range, [min] * len(anomaly_time_range), [max] * len(anomaly_time_range),
-                                   color='lightgreen', alpha=0.2)
+            ax[0].axvspan(anomay_time_window[0], anomay_time_window[1], alpha=0.5, color='gray')
 
         # plot anomaly scores
         ax[1].plot(ts['epoch'], scores, color='red')
@@ -188,4 +168,4 @@ if __name__ == '__main__':
     anomaly_scores = anomaly_detector.get_all_scores()
 
     plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir='/Users/yuval/Desktop/',
-                          show=False, plotly=True)
+                          show=False, plotly=False)
