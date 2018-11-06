@@ -163,35 +163,11 @@ if __name__ == '__main__':
 
     two = go.Scatter(
         x=ts['timestamp'],
-        y=ts['value']+0.2,
+        y=ts['value'] + 0.2,
         name='ts_2',
         line=dict(color='orange'),
         opacity=1.0)
     data = [one, two]
     plot(data)
 
-    # trace0 = go.Scatter(
-    #     x=[1, 2, 3, 4],
-    #     y=[3, 4, 8, 3],
-    #     fill=None,
-    #     mode='lines'
-    # )
-    # trace1 = go.Scatter(
-    #     x=[1, 2, 3, 4],
-    #     y=[5, 6, 10, 5],
-    #     fill='tonexty',
-    #     mode='lines',
-    #     opacity=0.05,
-    #     line=dict(color='gray',
-    #     )
-    # )
-    #
-    # d = go.Scatter(
-    #     x=[1, 2, 3, 4],
-    #     y=[4, 5, 9, 4],
-    #     line=dict(color='red'))
-    #
-    # data = [trace0, trace1, d]
-    # plot(data)
-
-    plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir='/Users/yuval/Desktop/', show=True)
+    plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=True, dir='/Users/yuval/Desktop/', show=True)
