@@ -190,8 +190,10 @@ if __name__ == '__main__':
         path = '/Users/yuval/Desktop/Yuval_TS_Table.csv'
         date_cols = ['end_time_stamp', 'start_time', 'end_time']
         ts = load_ts_data(path, timestamp_col='end_time_stamp', date_cols=date_cols)
-        ts = ts.loc[ts['stage_parallel'] == 'Sterilization #111'] # 'Puding Mixing #1', 'Sterilization #111', 'Storage tank #1'
+        ts = ts.loc[ts['stage_parallel'] == 'Puding Mixing #1'] # 'Puding Mixing #1', 'Sterilization #111', 'Storage tank #1'
         value_col = 'sensor_value'
+        # TODO: ADDING ZEROS JUST FOR PLAYING. REMOVE LATER
+        ts[value_col] = ts[value_col].transform(lambda x: x.fillna(x.median(), inplace=False))
     else:
         raise Exception('Unknown example.')
 
