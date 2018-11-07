@@ -13,18 +13,23 @@ from src.utils.logger import log
 pd.set_option('display.expand_frame_repr', False)
 
 
-def load_ts_data(path, timestamp_col=None, epoch_col=None, set_index=False, n_rows=None):
+def load_ts_data(path, timestamp_col=None, date_cols=None, epoch_col=None, set_index=False, n_rows=None):
     """ path should be a full path to a csv file with exactly one of columns
         timestamp or epoch
     """
     assert isinstance(path, str)
     assert isinstance(timestamp_col, (str, type(None)))
+    assert isinstance(date_cols, (list, type(None))) # columns to be parsed as dates
+    if date_cols is None:
+        date_cols = False
+    if timestamp_col is not None:
+        assert timestamp_col in date_cols, 'timestamp_col should be one of date_cols.'
     assert isinstance(epoch_col, (str, type(None)))
     assert isinstance(set_index, bool)
     assert isinstance(n_rows, (int, type(None)))
 
     if timestamp_col is not None:
-        ts = pd.read_csv(path, parse_dates=[timestamp_col], infer_datetime_format=True)
+        ts = pd.read_csv(path, parse_dates=date_cols, infer_datetime_format=True)
     else:
         ts = pd.read_csv(path)
     assert isinstance(ts, pd.DataFrame)
@@ -183,8 +188,10 @@ if __name__ == '__main__':
     elif example == 6:
         # example 6 - strauss, one batch_id
         path = '/Users/yuval/Desktop/Yuval_TS_Table.csv'
-        ts = load_ts_data(path, timestamp_col='end_time_stamp', n_rows=100)
-        value_col = 'value'
+        date_cols = ['end_time_stamp', 'start_time', 'end_time']
+        ts = load_ts_data(path, timestamp_col='end_time_stamp', date_cols=date_cols)
+        ts = ts.loc[ts['stage_parallel'] == 'Sterilization #111'] # 'Puding Mixing #1', 'Sterilization #111', 'Storage tank #1'
+        value_col = 'sensor_value'
     else:
         raise Exception('Unknown example.')
 
