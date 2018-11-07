@@ -1,6 +1,4 @@
-import numpy as np
 import pandas as pd
-import time
 import os
 import matplotlib.pyplot as plt
 from plotly import tools
@@ -27,7 +25,6 @@ def load_ts_data(path, timestamp_col=None, epoch_col=None, set_index=False, n_ro
 
     ts = pd.read_csv(path)  # , parse_dates=['timestamp'], infer_datetime_format=True)
     assert isinstance(ts, pd.DataFrame)
-    assert 'value' in ts.columns, 'missing \'value\' column'
     assert ((timestamp_col is None) and (epoch_col is not None)) or \
            ((timestamp_col is not None) and (
                    epoch_col is None)), 'ts should have either \'timestamp\' or \'epoch\' columns (but not both).'
@@ -45,7 +42,8 @@ def load_ts_data(path, timestamp_col=None, epoch_col=None, set_index=False, n_ro
         # ts has timestamp column. rename and add epoch column
         ts.rename(columns={timestamp_col: 'timestamp'}, inplace=True)
         # convert to epoch
-        ts['epoch'] = range(ts.shape[0])  # TODO
+        # TODO: make sure this is correct
+        ts['epoch'] = ts['timestamp'].head().astype('int64') // 1e9
 
     if set_index:
         ts = ts.set_index('timestamp')
@@ -160,6 +158,10 @@ if __name__ == '__main__':
     # path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/cpu4.csv'
     # ts = load_ts_data(path, epoch_col='timestamp', n_rows=30000)
 
+    # path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/network.csv'
+    # ts = load_ts_data(path, timestamp_col='time', n_rows=10000)
+    # ts.rename(columns={'In Octets': 'value'}, inplace=True)
+
     keys = ts['epoch']
     values = ts['value']
     ts_dict = dict(zip(keys, values))
@@ -171,4 +173,4 @@ if __name__ == '__main__':
     anomaly_scores = anomaly_detector.get_all_scores()
 
     plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir='/Users/yuval/Desktop/',
-                          show=False, plotly=True)
+                          show=True, plotly=True)
