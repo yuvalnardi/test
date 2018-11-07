@@ -48,9 +48,6 @@ def load_ts_data(path, timestamp_col=None, epoch_col=None, set_index=False, n_ro
         ts['epoch'] = ts['timestamp'].astype('int64') // 1e9
         ts['epoch'] = ts['epoch'].astype('int64')
 
-    # epoch/timestamp should not have duplicate values
-    assert len(ts['epoch'].unique()) == ts.shape[0], 'epoch/timestamp should not have duplicate values'
-
     if set_index:
         ts = ts.set_index('timestamp')
     if n_rows is not None:
@@ -74,11 +71,13 @@ def plot_ts_and_anomalies(ts, value_col, anomalies, anomaly_scores, ts_only=Fals
     assert isinstance(show, bool)
     assert isinstance(plotly, bool)
 
+    assert len(ts['timestamp'].unique()) == ts.shape[0], 'timestamp should not have duplicated values'
+
     if (len(anomalies) == 0) or ts_only:
         # plot ts only
         if len(anomalies) == 0:
             log.debug('Found no anomalies.')
-        plt.plot(ts[value_col], color='blue')
+        plt.plot_date(ts['timestamp'], ts[value_col], color='blue', fmt='-')
         plt.title('ts', size=12)
 
         if show:
@@ -171,7 +170,7 @@ if __name__ == '__main__':
         ts = load_ts_data(path, epoch_col='timestamp', n_rows=30000)
         value_col = 'value'
     elif example == 4:
-        # example 4 - has many columns
+        # example 4 - has many columns. Does not run. Has duplicated timestamp values
         path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/network.csv'
         ts = load_ts_data(path, timestamp_col='time')
         value_col = 'In Octets'
@@ -180,6 +179,7 @@ if __name__ == '__main__':
         path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/sample-1H.csv'
         ts = load_ts_data(path, timestamp_col='date')
         value_col = 'value'
+        ts = ts.loc[ts['category'] == 'C'] # 'A', 'B', or 'C'
     else:
         raise Exception('Unknown example.')
 
