@@ -15,7 +15,7 @@ pd.set_option('display.expand_frame_repr', False)
 
 def load_ts_data(path, timestamp_col=None, epoch_col=None, set_index=False, n_rows=None):
     """ path should be a full path to a csv file with exactly one of columns
-        timestamp or epoch, and a value column
+        timestamp or epoch
     """
     assert isinstance(path, str)
     assert isinstance(timestamp_col, (str, type(None)))
@@ -23,7 +23,10 @@ def load_ts_data(path, timestamp_col=None, epoch_col=None, set_index=False, n_ro
     assert isinstance(set_index, bool)
     assert isinstance(n_rows, (int, type(None)))
 
-    ts = pd.read_csv(path)  # , parse_dates=['timestamp'], infer_datetime_format=True)
+    if timestamp_col is not None:
+        ts = pd.read_csv(path, parse_dates=[timestamp_col], infer_datetime_format=True)
+    else:
+        ts = pd.read_csv(path)
     assert isinstance(ts, pd.DataFrame)
     assert ((timestamp_col is None) and (epoch_col is not None)) or \
            ((timestamp_col is not None) and (
@@ -42,8 +45,11 @@ def load_ts_data(path, timestamp_col=None, epoch_col=None, set_index=False, n_ro
         # ts has timestamp column. rename and add epoch column
         ts.rename(columns={timestamp_col: 'timestamp'}, inplace=True)
         # convert to epoch
-        # TODO: make sure this is correct
-        ts['epoch'] = ts['timestamp'].head().astype('int64') // 1e9
+        ts['epoch'] = ts['timestamp'].astype('int64') // 1e9
+        ts['epoch'] = ts['epoch'].astype('int64')
+
+    # epoch/timestamp should not have duplicate values
+    assert len(ts['epoch'].unique()) == ts.shape[0], 'epoch/timestamp should not have duplicate values'
 
     if set_index:
         ts = ts.set_index('timestamp')
@@ -53,8 +59,10 @@ def load_ts_data(path, timestamp_col=None, epoch_col=None, set_index=False, n_ro
     return ts
 
 
-def plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir=None, show=True, plotly=False):
+def plot_ts_and_anomalies(ts, value_col, anomalies, anomaly_scores, ts_only=False, dir=None, show=True, plotly=False):
     assert isinstance(ts, pd.DataFrame)
+    assert isinstance(value_col, str)
+    assert not pd.isnull(ts[value_col]).any(), 'value_col has missing data'
     assert isinstance(anomalies, list)
     assert isinstance(anomaly_scores, TimeSeries)
     assert isinstance(ts_only, bool)
@@ -70,29 +78,25 @@ def plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir=None
         # plot ts only
         if len(anomalies) == 0:
             log.debug('Found no anomalies.')
-        plt.plot(ts['value'], color='blue')
+        plt.plot(ts[value_col], color='blue')
         plt.title('ts', size=12)
 
         if show:
             plt.show()
 
+        # TODO: add plotly plot in this case as well
+
     else:
         # plot ts and anomalies
         log.debug('Found {} anomalies.'.format(len(anomalies)))
 
-        anom_score = []
-        scores = []
-
-        for (timestamp, value) in anomaly_scores.iteritems():
-            # t_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
-            # anom_score.append([t_str, value])
-            scores.append(value)
+        scores = anomaly_scores.values
 
         fig, ax = plt.subplots(2, 1)
 
         # plot ts
-        # ax[0].plot(ts['epoch'], ts['value'], color='blue')
-        ax[0].plot_date(ts['timestamp'], ts['value'], color='blue', fmt='-')
+        # ax[0].plot(ts['epoch'], ts[value_col], color='blue')
+        ax[0].plot_date(ts['timestamp'], ts[value_col], color='blue', fmt='-')
         ax[0].set_title('ts', size=12)
 
         # plot anomalies on top of ts
@@ -125,7 +129,7 @@ def plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir=None
                 full_path = dir + file_name
                 time_series = go.Scatter(
                     x=ts['timestamp'],
-                    y=ts['value'],
+                    y=ts[value_col],
                     name='ts',
                     mode='lines',
                     line=dict(color='blue'))
@@ -145,25 +149,38 @@ def plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir=None
                 fig['layout'].update(title='Time series and anomaly scores')
                 plot(fig, filename=full_path)
             else:
-                log.debug('Need to supply a dir in order for to generate plotly chart.')
+                log.debug('Need to supply a dir in order to generate plotly chart.')
 
 
 if __name__ == '__main__':
-    path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/g.csv'
-    ts = load_ts_data(path, epoch_col='timestamp', n_rows=10000)
 
-    # path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/art_noisy.csv'
-    # ts = load_ts_data(path, timestamp_col='timestamp', n_rows=1000)
+    example = 4
+    if example == 1:
+        # example 1 - has epoch_col
+        path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/g.csv'
+        ts = load_ts_data(path, epoch_col='timestamp', n_rows=10000)
+        value_col = 'value'
+    elif example == 2:
+        # example 2 - has timestamp_col
+        path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/art_noisy.csv'
+        ts = load_ts_data(path, timestamp_col='timestamp', n_rows=1000)
+        value_col = 'value'
+    elif example == 3:
+        # example 3
+        path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/cpu4.csv'
+        ts = load_ts_data(path, epoch_col='timestamp', n_rows=30000)
+        value_col = 'value'
+    elif example == 4:
+        # example 4 - has many columns
+        path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/network.csv'
+        ts = load_ts_data(path, timestamp_col='time')
+        value_col = 'In Octets'
+    else:
+        raise Exception('Unknown example.')
 
-    # path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/cpu4.csv'
-    # ts = load_ts_data(path, epoch_col='timestamp', n_rows=30000)
-
-    # path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/network.csv'
-    # ts = load_ts_data(path, timestamp_col='time', n_rows=10000)
-    # ts.rename(columns={'In Octets': 'value'}, inplace=True)
-
+    # run anomaly detection algorithm
     keys = ts['epoch']
-    values = ts['value']
+    values = ts[value_col]
     ts_dict = dict(zip(keys, values))
 
     algorithm_name = 'exp_avg_detector'
@@ -172,5 +189,6 @@ if __name__ == '__main__':
     anomalies = anomaly_detector.get_anomalies()
     anomaly_scores = anomaly_detector.get_all_scores()
 
-    plot_ts_and_anomalies(ts, anomalies, anomaly_scores, ts_only=False, dir='/Users/yuval/Desktop/',
-                          show=True, plotly=True)
+    # plot results
+    plot_ts_and_anomalies(ts, value_col, anomalies, anomaly_scores,
+                          ts_only=False, dir='/Users/yuval/Desktop/', show=True, plotly=True)
