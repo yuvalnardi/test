@@ -153,7 +153,7 @@ def plot_ts_and_anomalies(ts, value_col, anomalies, anomaly_scores, ts_only=Fals
 
 if __name__ == '__main__':
 
-    example = 5
+    example = 6
     if example == 1:
         # example 1 - has epoch_col
         path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/g.csv'
@@ -180,6 +180,11 @@ if __name__ == '__main__':
         ts = load_ts_data(path, timestamp_col='date')
         value_col = 'value'
         ts = ts.loc[ts['category'] == 'C'] # 'A', 'B', or 'C'
+    elif example == 6:
+        # example 6 - strauss, one batch_id
+        path = '/Users/yuval/Desktop/Yuval_TS_Table.csv'
+        ts = load_ts_data(path, timestamp_col='end_time_stamp', n_rows=100)
+        value_col = 'value'
     else:
         raise Exception('Unknown example.')
 
