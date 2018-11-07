@@ -154,7 +154,7 @@ def plot_ts_and_anomalies(ts, value_col, anomalies, anomaly_scores, ts_only=Fals
 
 if __name__ == '__main__':
 
-    example = 4
+    example = 5
     if example == 1:
         # example 1 - has epoch_col
         path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/g.csv'
@@ -175,6 +175,11 @@ if __name__ == '__main__':
         path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/network.csv'
         ts = load_ts_data(path, timestamp_col='time')
         value_col = 'In Octets'
+    elif example == 5:
+        # example 5
+        path = '/Users/yuval/Dropbox/MyData/Misc/Seebo/data/sample-1H.csv'
+        ts = load_ts_data(path, timestamp_col='date')
+        value_col = 'value'
     else:
         raise Exception('Unknown example.')
 
