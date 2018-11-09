@@ -48,13 +48,14 @@ class FeatureEngineeringRunner(object):
                 assert np.equal(first_batch_sensors, sensors_per_batch.iloc[i]), \
                     'all batches should have the same sensors'
 
-
         # TODO: sort by batch_id, metric_id, value
         data = data.sort_values(by=['batch_id', 'metric_id', 'sensor_value'], inplace=False)
-        # TODO: impute missing values
+
+        # impute missing values
+        # TODO: replace this stupid imputation method
+        data['sensor_value'] = data['sensor_value'].fillna(0.0, inplace=False)
 
         # instantiate composite feature extractor
-
         # TODO: map self._feature_extractor_names to self._feature_extractor_objects
         gfe = GlobalFeatureExtractor()
         tfe = TemporalFeatureExtractor()
