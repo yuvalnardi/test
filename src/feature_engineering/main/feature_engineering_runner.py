@@ -53,6 +53,7 @@ class FeatureEngineeringRunner(object):
 
 if __name__ == '__main__':
     config_file_full_path = '/Users/yuval/Desktop/test/resources/config/feature_engineering_config.yml'
+    config_file_full_path = 'D:\FAMILY\Yuval\Work\Seebo\\test\\resources\config\\feature_engineering_config.yml'
 
     feature_engineering_runner = FeatureEngineeringRunner(config_file_full_path)
     feature_engineering_main_output = feature_engineering_runner.run()
