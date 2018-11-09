@@ -16,6 +16,7 @@ class GlobalFeatureExtractor(FeatureExtractorBase):
     def extract(self, data):
 
         assert isinstance(data, pd.DataFrame)
+        # TODO: assert that data have no NaN, Inf, -Inf values
 
         log.debug('Running Global feature extractor ..')
         gfe_start_time = time.time()
