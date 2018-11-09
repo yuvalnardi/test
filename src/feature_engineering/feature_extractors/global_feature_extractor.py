@@ -28,7 +28,12 @@ class GlobalFeatureExtractor(FeatureExtractorBase):
         # fc_parameters = EfficientFCParameters()
         # fc_parameters = ComprehensiveFCParameters()
 
-        design_matrix = pd.DataFrame(np.random.normal(0, 1, [5, 2]), columns=['X1', 'X2'])
+        design_matrix = extract_features(data,
+                                         default_fc_parameters=fc_parameters,
+                                         column_id='batch_id',
+                                         column_sort='end_time_stamp',
+                                         column_kind='metric_id',
+                                         column_value='sensor_value')
 
         gfe_end_time = time.time()
         gfe_duration = round((gfe_end_time - gfe_start_time) / 60, 2)
