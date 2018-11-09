@@ -16,9 +16,9 @@ class GlobalFeatureExtractor(FeatureExtractorBase):
     def extract(self, data):
 
         assert isinstance(data, pd.DataFrame)
-        # assert that data have no NaN, Inf, -Inf values
+        # assert that data have no Naassert not pd.isnull(data).values.any(), 'data should not contain missing values or -+infinity.'N, Inf, -Inf values
         data = data.replace([np.inf, -np.inf], np.nan, inplace=False)
-        assert not any(pd.isnull(data)), 'data should not contain missing values or -+infinity.'
+        assert not pd.isnull(data).values.any(), 'data should not contain missing values or -+infinity.'
 
         log.debug('Running Global feature extractor ..')
         gfe_start_time = time.time()
