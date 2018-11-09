@@ -33,12 +33,21 @@ class FeatureEngineeringRunner(object):
         fe_start_time = time.time()
 
         # load data
-        data = pd.DataFrame(np.random.normal(0, 1, [10, 2]), columns=['A', 'B'])
+        # data = pd.DataFrame(np.random.normal(0, 1, [10, 2]), columns=['A', 'B'])
         dir = u'D:\\FAMILY\\Yuval\\Work\\Seebo\\'
         file = u'Yuval_TS_Table.csv'
         path = dir + file
+        # date_cols = ['end_time_stamp', 'start_time', 'end_time']
+        # data = pd.read_csv(path, parse_dates=date_cols, infer_datetime_format=True)
         data = pd.read_csv(path)
-        # TODO: validate every batch has the same sensors data
+        sensors_per_batch = data.groupby('batch_id')['metric_id'].apply(lambda ts: ts.unique())
+        if sensors_per_batch.shape[0] > 1:
+            # TODO: validate every batch has the same sensors data. Make more elegant
+            first_batch_sensors = sensors_per_batch.iloc[0]
+            for i in range(1, len(sensors_per_batch.shape[0])):
+                assert np.equal(first_batch_sensors, sensors_per_batch.iloc[i]), \
+                    'all batches should have the same sensors'
+
 
         # TODO: sort by batch_id, metric_id, value
         data = data.sort_values(by=['batch_id', 'metric_id', 'sensor_value'], inplace=False)
