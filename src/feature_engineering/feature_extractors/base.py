@@ -1,11 +1,12 @@
 from src.utils.logger import log
 
+
 class FeatureExtractorBase(object):
 
     def __init__(self):
         pass
 
-    def extractFeatures(self, data):
+    def extract_features(self, data):
         design_matrix = self.extract(data)
 
         return design_matrix

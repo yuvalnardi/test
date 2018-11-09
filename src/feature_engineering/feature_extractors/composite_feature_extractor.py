@@ -19,7 +19,7 @@ class CompositeFeatureExtractor(FeatureExtractorBase):
 
         matrices_lst = []
         for fe in self._feature_extractors:
-            matrices_lst.append(fe.extractFeatures(data))
+            matrices_lst.append(fe.extract_features(data))
 
         design_matrix = pd.concat(matrices_lst, axis=1)
 

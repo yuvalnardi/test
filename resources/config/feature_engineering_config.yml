@@ -9,7 +9,7 @@ MetaParams:
     raw_data_dir:
     design_matrix_dir:
 
-TimeSeriesFeaturesEnricher:
+TimeSeriesFeaturesEnricher: # 25 enrichable features
     feature_calculator_to_params:
         maximum :
         mean :
@@ -33,5 +33,14 @@ TimeSeriesFeaturesEnricher:
         skewness :
         spkt_welch_density : [{'coeff': 2}]
         time_reversal_asymmetry_statistic : [{'lag': 1}]
+
+TimeSeriesFeaturesEnricher: # predefined parameters: MinimalFCParameters
+    feature_calculator_to_params:
+        maximum :
+        mean :
+        median :
+        minimum :
+        sum_values :
+        variance :
 
 FeatureExtractors: [GlobalFeatureExtractor, TemporalFeatureExtractor]

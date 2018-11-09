@@ -40,6 +40,8 @@ class FeatureEngineeringRunner(object):
         data = pd.read_csv(path)
         # TODO: validate every batch has the same sensors data
 
+        # TODO: sort by batch_id, metric_id, value
+        data = data.sort_values(by=['batch_id', 'metric_id', 'sensor_value'], inplace=False)
         # TODO: impute missing values
 
         # instantiate composite feature extractor
