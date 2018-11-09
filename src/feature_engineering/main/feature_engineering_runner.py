@@ -8,6 +8,8 @@ from src.feature_engineering.feature_extractors.composite_feature_extractor impo
 from src.feature_engineering.feature_extractors.global_feature_extractor import GlobalFeatureExtractor
 from src.feature_engineering.feature_extractors.temporal_feature_extractor import TemporalFeatureExtractor
 
+# pd.set_option('display.max_rows', None, 'display.max_columns', None)
+pd.set_option('display.expand_frame_repr', False)
 
 class FeatureEngineeringRunner(object):
 
@@ -32,7 +34,13 @@ class FeatureEngineeringRunner(object):
 
         # load data
         data = pd.DataFrame(np.random.normal(0, 1, [10, 2]), columns=['A', 'B'])
+        dir = u'D:\\FAMILY\\Yuval\\Work\\Seebo\\'
+        file = u'Yuval_TS_Table.csv'
+        path = dir + file
+        data = pd.read_csv(path)
         # TODO: validate every batch has the same sensors data
+
+        # TODO: impute missing values
 
         # instantiate composite feature extractor
 
@@ -53,7 +61,7 @@ class FeatureEngineeringRunner(object):
 
 if __name__ == '__main__':
     config_file_full_path = '/Users/yuval/Desktop/test/resources/config/feature_engineering_config.yml'
-    config_file_full_path = 'D:\FAMILY\Yuval\Work\Seebo\\test\\resources\config\\feature_engineering_config.yml'
+    config_file_full_path = 'D:\\FAMILY\\Yuval\\Work\\Seebo\\test\\resources\\config\\feature_engineering_config.yml'
 
     feature_engineering_runner = FeatureEngineeringRunner(config_file_full_path)
     feature_engineering_main_output = feature_engineering_runner.run()
