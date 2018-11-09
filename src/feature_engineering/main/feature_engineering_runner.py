@@ -37,6 +37,7 @@ class FeatureEngineeringRunner(object):
         dir = u'D:\\FAMILY\\Yuval\\Work\\Seebo\\'
         file = u'Yuval_TS_Table.csv'
         path = dir + file
+        # TODO: see parsing dates is so slow
         # date_cols = ['end_time_stamp', 'start_time', 'end_time']
         # data = pd.read_csv(path, parse_dates=date_cols, infer_datetime_format=True)
         data = pd.read_csv(path)
