@@ -10,7 +10,11 @@ from src.feature_engineering.feature_extractors.base import FeatureExtractorBase
 
 class GlobalFeatureExtractor(FeatureExtractorBase):
 
-    def __init__(self):
+    def __init__(self, params):
+
+        assert isinstance(params, dict)
+        self._params = params
+        self._feature_calculator_to_params = self._params.get('feature_calculator_to_params')
         super().__init__()
 
     def extract(self, data):
@@ -24,12 +28,12 @@ class GlobalFeatureExtractor(FeatureExtractorBase):
         gfe_start_time = time.time()
 
         # setting time series features to extract or use default
-        fc_parameters = MinimalFCParameters()
+        # fc_parameters = MinimalFCParameters()
         # fc_parameters = EfficientFCParameters()
         # fc_parameters = ComprehensiveFCParameters()
 
         design_matrix = extract_features(data,
-                                         default_fc_parameters=fc_parameters,
+                                         default_fc_parameters=self._feature_calculator_to_params,
                                          column_id='batch_id',
                                          column_sort='end_time_stamp',
                                          column_kind='metric_id',

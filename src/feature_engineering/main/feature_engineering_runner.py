@@ -57,7 +57,7 @@ class FeatureEngineeringRunner(object):
 
         # instantiate composite feature extractor
         # TODO: map self._feature_extractor_names to self._feature_extractor_objects
-        gfe = GlobalFeatureExtractor()
+        gfe = GlobalFeatureExtractor(self._time_series_features_enricher)
         tfe = TemporalFeatureExtractor()
         cfe = CompositeFeatureExtractor([gfe, tfe])
         design_matrix = cfe.extract(data)

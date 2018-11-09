@@ -36,11 +36,11 @@ TimeSeriesFeaturesEnricher: # 25 enrichable features
 
 TimeSeriesFeaturesEnricher: # predefined parameters: MinimalFCParameters
     feature_calculator_to_params:
-        maximum :
+        minimum :
+        #quantile : [0.25, 0.75]
         mean :
         median :
-        minimum :
-        sum_values :
+        maximum :
         variance :
 
 FeatureExtractors: [GlobalFeatureExtractor, TemporalFeatureExtractor]
