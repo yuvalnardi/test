@@ -34,10 +34,10 @@ TimeSeriesFeaturesEnricher: # 25 enrichable features
         spkt_welch_density : [{'coeff': 2}]
         time_reversal_asymmetry_statistic : [{'lag': 1}]
 
-TimeSeriesFeaturesEnricher: # predefined parameters: MinimalFCParameters
+TimeSeriesFeaturesEnricher: # minimal set of parameters
     feature_calculator_to_params:
         minimum :
-        #quantile : [0.25, 0.75]
+        quantile : [{'q': 0.25}, {'q': 0.75}]
         mean :
         median :
         maximum :
