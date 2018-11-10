@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import time
+import multiprocessing
 from tsfresh import extract_features
 from tsfresh.feature_extraction import MinimalFCParameters, EfficientFCParameters, ComprehensiveFCParameters
 
@@ -15,14 +16,20 @@ class GlobalFeatureExtractor(FeatureExtractorBase):
         assert isinstance(params, dict)
         self._params = params
         self._feature_calculator_to_params = self._params.get('feature_calculator_to_params')
+        self._parallel = self._params.get('parallel')
+        assert isinstance(self._parallel, (bool, type(None)))
+        if self._parallel is None:
+            self._parallel = False
+        n_cores_available = multiprocessing.cpu_count()
+        self._num_of_cores_to_use = n_cores_available if self._parallel else 1
         super().__init__()
 
     def extract(self, data):
 
         assert isinstance(data, pd.DataFrame)
-        # assert that data have no Naassert not pd.isnull(data).values.any(), 'data should not contain missing values or -+infinity.'N, Inf, -Inf values
+        # assert that data have no NaN, Inf, -Inf values
         data = data.replace([np.inf, -np.inf], np.nan, inplace=False)
-        assert not pd.isnull(data).values.any(), 'data should not contain missing values or -+infinity.'
+        assert not pd.isnull(data).values.any(), 'data should not contain missing values or +-infinity.'
 
         log.debug('Running Global feature extractor ..')
         gfe_start_time = time.time()
@@ -37,7 +44,8 @@ class GlobalFeatureExtractor(FeatureExtractorBase):
                                          column_id='batch_id',
                                          column_sort='end_time_stamp',
                                          column_kind='metric_id',
-                                         column_value='sensor_value')
+                                         column_value='sensor_value',
+                                         n_jobs=self._num_of_cores_to_use)
 
         gfe_end_time = time.time()
         gfe_duration = round((gfe_end_time - gfe_start_time) / 60, 2)

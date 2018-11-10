@@ -42,5 +42,6 @@ TimeSeriesFeaturesEnricher: # minimal set of parameters
         median :
         maximum :
         variance :
+    parallel : True
 
 FeatureExtractors: [GlobalFeatureExtractor, TemporalFeatureExtractor]
