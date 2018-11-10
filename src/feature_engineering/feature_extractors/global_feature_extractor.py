@@ -27,9 +27,8 @@ class GlobalFeatureExtractor(FeatureExtractorBase):
     def extract(self, data):
 
         assert isinstance(data, pd.DataFrame)
-        # assert that data have no NaN, Inf, -Inf values
-        data = data.replace([np.inf, -np.inf], np.nan, inplace=False)
-        assert not pd.isnull(data).values.any(), 'data should not contain missing values or +-infinity.'
+        # assert that data have no missing values
+        assert not pd.isnull(data).values.any(), 'data should not contain missing values.'
 
         log.debug('Running Global feature extractor ..')
         gfe_start_time = time.time()
@@ -49,6 +48,7 @@ class GlobalFeatureExtractor(FeatureExtractorBase):
 
         gfe_end_time = time.time()
         gfe_duration = round((gfe_end_time - gfe_start_time) / 60, 2)
+
         log.debug('Done running Global feature extractor [Total time: {} mins.].'.format(gfe_duration))
 
         return design_matrix

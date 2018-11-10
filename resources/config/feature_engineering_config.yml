@@ -42,6 +42,6 @@ TimeSeriesFeaturesEnricher: # minimal set of parameters
         median :
         maximum :
         variance :
-    parallel : True
+    parallel : False # empty (i.e., None) means False
 
 FeatureExtractors: [GlobalFeatureExtractor, TemporalFeatureExtractor]

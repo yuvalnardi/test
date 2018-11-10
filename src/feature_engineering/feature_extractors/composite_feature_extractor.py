@@ -13,6 +13,8 @@ class CompositeFeatureExtractor(FeatureExtractorBase):
 
     def extract(self, data):
         assert isinstance(data, pd.DataFrame)
+        # assert that data have no missing values
+        assert not pd.isnull(data).values.any(), 'data should not contain missing values.'
 
         log.debug('Running Composite feature extractor ..')
         cfe_start_time = time.time()
