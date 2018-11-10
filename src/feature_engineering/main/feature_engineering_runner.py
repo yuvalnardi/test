@@ -47,7 +47,7 @@ class FeatureEngineeringRunner(object):
             first_batch_sensors = sensors_per_batch.iloc[0]
             for i in range(1, len(sensors_per_batch.shape[0])):
                 assert np.equal(first_batch_sensors, sensors_per_batch.iloc[i]), \
-                    'all batches should have the same sensors'
+                    'All batches should have the same sensors'
 
         # TODO: sort by batch_id, metric_id, value
         data = data.sort_values(by=['batch_id', 'metric_id', 'sensor_value'], inplace=False)
@@ -73,8 +73,8 @@ class FeatureEngineeringRunner(object):
 
 
 if __name__ == '__main__':
-    # config_file_full_path = '/Users/yuval/Desktop/test/resources/config/feature_engineering_config.yml'
-    config_file_full_path = 'D:\\FAMILY\\Yuval\\Work\\Seebo\\test\\resources\\config\\feature_engineering_config.yml'
+    # config_file_full_path = u'/Users/yuval/Desktop/test/resources/config/feature_engineering_config.yml'
+    config_file_full_path = u'D:\\FAMILY\\Yuval\\Work\\Seebo\\test\\resources\\config\\feature_engineering_config.yml'
 
     feature_engineering_runner = FeatureEngineeringRunner(config_file_full_path)
     feature_engineering_main_output = feature_engineering_runner.run()
