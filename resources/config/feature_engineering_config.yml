@@ -10,38 +10,38 @@ MetaParams:
     design_matrix_dir:
 
 TimeSeriesFeaturesEnricher: # 25 enrichable features
-    feature_calculator_to_params:
-        maximum :
-        mean :
-        median :
-        minimum :
-        sum_values :
-        variance :
-        abs_energy :
-        autocorrelation : [{'lag': 1}]
-        binned_entropy : [{'max_bins': 10}]
-        c3 : [{'lag': 1}]
-        cid_ce : [{'normalize': True}]
-        count_above_mean :
-        count_below_mean :
-        fft_aggregated : [{'aggtype': 'centroid'}, {'aggtype': 'variance'}, {'aggtype': 'skew'}, {'aggtype': 'kurtosis'}]
-        fft_coefficient : [{'attr': 'real', 'coeff': 0}]
-        kurtosis :
-        mean_abs_change :
-        mean_second_derivative_central :
-        sample_entropy :
-        skewness :
-        spkt_welch_density : [{'coeff': 2}]
-        time_reversal_asymmetry_statistic : [{'lag': 1}]
+    fc_parameters:
+        maximum:
+        mean:
+        median:
+        minimum:
+        sum_values:
+        variance:
+        abs_energy:
+        autocorrelation: [{'lag': 1}]
+        binned_entropy: [{'max_bins': 10}]
+        c3: [{'lag': 1}]
+        cid_ce: [{'normalize': True}]
+        count_above_mean:
+        count_below_mean:
+        fft_aggregated: [{'aggtype': 'centroid'}, {'aggtype': 'variance'}, {'aggtype': 'skew'}, {'aggtype': 'kurtosis'}]
+        fft_coefficient: [{'attr': 'real', 'coeff': 0}]
+        kurtosis:
+        mean_abs_change:
+        mean_second_derivative_central:
+        sample_entropy:
+        skewness:
+        spkt_welch_density: [{'coeff': 2}]
+        time_reversal_asymmetry_statistic: [{'lag': 1}]
 
 TimeSeriesFeaturesEnricher: # minimal set of parameters
-    feature_calculator_to_params:
-        minimum :
-        quantile : [{'q': 0.25}, {'q': 0.75}]
-        mean :
-        median :
-        maximum :
-        variance :
-    parallel : False # empty (i.e., None) means False
+    fc_parameters:
+        minimum:
+        quantile: [{'q': 0.25}, {'q': 0.75}]
+        mean:
+        median:
+        maximum:
+        variance:
+    parallel: False # empty (i.e., None) means False
 
 FeatureExtractors: [GlobalFeatureExtractor, TemporalFeatureExtractor]

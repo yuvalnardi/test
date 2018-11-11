@@ -16,7 +16,7 @@ class GlobalFeatureExtractor(FeatureExtractorBase):
 
         assert isinstance(params, dict)
         self._params = params
-        self._feature_calculator_to_params = self._params.get('feature_calculator_to_params')
+        self._fc_parameters = self._params.get('fc_parameters')
         self._parallel = self._params.get('parallel')
         assert isinstance(self._parallel, (bool, type(None)))
         if self._parallel is None:
@@ -41,7 +41,7 @@ class GlobalFeatureExtractor(FeatureExtractorBase):
 
         # feature extraction
         design_matrix = extract_features(data,
-                                         default_fc_parameters=self._feature_calculator_to_params,
+                                         default_fc_parameters=self._fc_parameters,
                                          column_id='batch_id',
                                          column_sort='end_time_stamp',
                                          column_kind='metric_id',
@@ -55,7 +55,6 @@ class GlobalFeatureExtractor(FeatureExtractorBase):
         # (can also be done by passing impute_function=impute) to extract_features())
         impute(design_matrix)
         # TODO: assert that none cf the columns was filled with zeros
-        print(design_matrix.info())
 
         gfe_end_time = time.time()
         gfe_duration = round((gfe_end_time - gfe_start_time) / 60, 2)
