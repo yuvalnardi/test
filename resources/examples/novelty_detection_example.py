@@ -5,7 +5,8 @@ from sklearn.svm import OneClassSVM
 
 # source: https://scikit-learn.org/stable/auto_examples/svm/plot_oneclass.html
 
-# TODO: maybe adapt Novely Detection to the pilot real-time anomaly detection
+# TODO: maybe adapt Novelty Detection to the pilot real-time anomaly detection:
+# classifying new data as similar or different to the training set
 
 xx, yy = np.meshgrid(np.linspace(-5, 5, 500), np.linspace(-5, 5, 500))
 # Generate train data
