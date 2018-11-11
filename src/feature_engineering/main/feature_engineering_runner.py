@@ -33,7 +33,6 @@ class FeatureEngineeringRunner(object):
         fe_start_time = time.time()
 
         # load data
-        # data = pd.DataFrame(np.random.normal(0, 1, [10, 2]), columns=['A', 'B'])
         dir = u'D:\\FAMILY\\Yuval\\Work\\Seebo\\'
         file = u'Yuval_TS_Table.csv'
         path = dir + file
