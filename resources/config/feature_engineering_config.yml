@@ -10,6 +10,7 @@ MetaParams:
     design_matrix_dir:
 
 TimeSeriesFeaturesEnricher: # 25 enrichable features
+    parallel: False # empty (i.e., None) means False
     fc_parameters:
         maximum:
         mean:
@@ -35,6 +36,7 @@ TimeSeriesFeaturesEnricher: # 25 enrichable features
         time_reversal_asymmetry_statistic: [{'lag': 1}]
 
 TimeSeriesFeaturesEnricher: # minimal set of parameters
+    parallel: False # empty (i.e., None) means False
     fc_parameters:
         minimum:
         quantile: [{'q': 0.25}, {'q': 0.75}]
@@ -42,6 +44,5 @@ TimeSeriesFeaturesEnricher: # minimal set of parameters
         median:
         maximum:
         variance:
-    parallel: False # empty (i.e., None) means False
 
 FeatureExtractors: [GlobalFeatureExtractor, TemporalFeatureExtractor]
