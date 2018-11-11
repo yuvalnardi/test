@@ -7,6 +7,7 @@ from sklearn.svm import OneClassSVM
 
 # TODO: maybe adapt Novelty Detection to the pilot real-time anomaly detection:
 # classifying new data as similar or different to the training set
+# try either OneClassSVM or LocalOutlierFactor
 
 xx, yy = np.meshgrid(np.linspace(-5, 5, 500), np.linspace(-5, 5, 500))
 # Generate train data
