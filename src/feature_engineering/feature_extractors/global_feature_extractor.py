@@ -56,6 +56,10 @@ class GlobalFeatureExtractor(FeatureExtractorBase):
         impute(design_matrix)
         # TODO: assert that none cf the columns was filled with zeros
 
+        # TODO: think about feature selection as well (extract_relevant_features), see:
+        # https://github.com/blue-yonder/tsfresh/blob/master/notebooks/robot_failure_example.ipynb
+        # note though that this may be problematic for real-time ts anomaly detection
+
         gfe_end_time = time.time()
         gfe_duration = round((gfe_end_time - gfe_start_time) / 60, 2)
 
