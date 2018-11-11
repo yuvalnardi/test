@@ -3,6 +3,7 @@ import pandas as pd
 import time
 import multiprocessing
 from tsfresh import extract_features
+from tsfresh.utilities.dataframe_functions import impute
 from tsfresh.feature_extraction import MinimalFCParameters, EfficientFCParameters, ComprehensiveFCParameters
 
 from src.utils.logger import log
@@ -38,6 +39,7 @@ class GlobalFeatureExtractor(FeatureExtractorBase):
         # fc_parameters = EfficientFCParameters()
         # fc_parameters = ComprehensiveFCParameters()
 
+        # feature extraction
         design_matrix = extract_features(data,
                                          default_fc_parameters=self._feature_calculator_to_params,
                                          column_id='batch_id',
@@ -45,6 +47,15 @@ class GlobalFeatureExtractor(FeatureExtractorBase):
                                          column_kind='metric_id',
                                          column_value='sensor_value',
                                          n_jobs=self._num_of_cores_to_use)
+
+        # impute: use a builtin tsfresh method that replaces NaN with median and -inf
+        # [+inf] with min [max] in a columnwise fashion (and in place)
+        # If the column does not contain finite values at all, it is filled with zeros
+        # Also, all columns will be guaranteed to be of type np.float64
+        # (can also be done by passing impute_function=impute) to extract_features())
+        impute(design_matrix)
+        # TODO: assert that none cf the columns was filled with zeros
+        print(design_matrix.info())
 
         gfe_end_time = time.time()
         gfe_duration = round((gfe_end_time - gfe_start_time) / 60, 2)
